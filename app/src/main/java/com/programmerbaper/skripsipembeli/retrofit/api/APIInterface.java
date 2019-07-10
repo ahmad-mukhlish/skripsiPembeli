@@ -4,6 +4,7 @@ import com.programmerbaper.skripsipembeli.model.Makanan;
 import com.programmerbaper.skripsipembeli.model.Pedagang;
 import com.programmerbaper.skripsipembeli.model.Pembeli;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -23,5 +24,5 @@ public interface APIInterface {
     Call<List<Pedagang>> pilihanPedagangGet();
 
     @GET("makananPedagangGet/{id_pedagang}")
-    Call<List<Makanan>> makananPedagangGet(@Path("id_pedagang") int idPedagang);
+    Call<ArrayList<Makanan>> makananPedagangGet(@Path("id_pedagang") int idPedagang);
 }

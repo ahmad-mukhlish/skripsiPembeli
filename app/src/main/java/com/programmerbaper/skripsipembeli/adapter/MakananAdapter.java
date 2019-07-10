@@ -1,6 +1,7 @@
 package com.programmerbaper.skripsipembeli.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,36 +16,37 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.programmerbaper.skripsipembeli.R;
+import com.programmerbaper.skripsipembeli.activities.ConfirmActivity;
 import com.programmerbaper.skripsipembeli.activities.PilihMakananActivity;
 import com.programmerbaper.skripsipembeli.misc.Helper;
 import com.programmerbaper.skripsipembeli.model.Makanan;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import static com.programmerbaper.skripsipembeli.misc.Config.BASE_URL;
 
-public class MakananAdapter extends RecyclerView.Adapter<MakananAdapter.MenuViewHolder> {
+public class MakananAdapter extends RecyclerView.Adapter<MakananAdapter.MakananViewHolder> {
 
 
-    private Context mContext;
-    private List<Makanan> mLists;
+    private Context context;
+    private ArrayList<Makanan> listMakanan;
 
-    public MakananAdapter(Context mContext, List<Makanan> makanans) {
-        this.mContext = mContext;
-        this.mLists = makanans;
+    public MakananAdapter(Context context, ArrayList<Makanan> listMakanan) {
+        this.context = context;
+        this.listMakanan = listMakanan;
     }
 
     @Override
-    public MenuViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(mContext).inflate(R.layout.card_pilih_makanan, parent, false);
-        return new MenuViewHolder(itemView);
+    public MakananViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(context).inflate(R.layout.card_pilih_makanan, parent, false);
+        return new MakananViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(final MenuViewHolder holder, int position) {
-        final Makanan makananNow = mLists.get(position);
+    public void onBindViewHolder(final MakananViewHolder holder, int position) {
+        final Makanan makananNow = listMakanan.get(position);
 
-        Glide.with(mContext).
+        Glide.with(context).
                 load(BASE_URL + "storage/makanan-photos/" + makananNow.getFoto()).
                 placeholder(R.drawable.placeholder_makanan).
                 into(holder.mGambar);
@@ -65,15 +67,7 @@ public class MakananAdapter extends RecyclerView.Adapter<MakananAdapter.MenuView
                 makananNow.setQty(qty);
                 holder.mQty.setText(qty + "");
 
-                Long hasil = 0l ;
-
-                for (Makanan makananNow : mLists) {
-
-                    hasil += makananNow.getHarga() * makananNow.getQty();
-
-                }
-
-                PilihMakananActivity.updateEstimatedPrice(hasil);
+                countEstimatedPrice();
 
             }
         });
@@ -93,17 +87,7 @@ public class MakananAdapter extends RecyclerView.Adapter<MakananAdapter.MenuView
                     holder.mAdd.setVisibility(View.VISIBLE);
                 }
 
-
-                Long hasil = 0l ;
-
-                for (Makanan makananNow : mLists) {
-
-                    hasil += makananNow.getHarga() * makananNow.getQty();
-
-                }
-
-                PilihMakananActivity.updateEstimatedPrice(hasil);
-
+                countEstimatedPrice();
             }
         });
 
@@ -115,15 +99,7 @@ public class MakananAdapter extends RecyclerView.Adapter<MakananAdapter.MenuView
                 makananNow.setQty(1);
                 holder.mQty.setText(makananNow.getQty() + "");
 
-                Long hasil = 0l ;
-
-                for (Makanan makananNow : mLists) {
-
-                    hasil += makananNow.getHarga() * makananNow.getQty();
-
-                }
-
-                PilihMakananActivity.updateEstimatedPrice(hasil);
+                countEstimatedPrice();
 
 
             }
@@ -133,10 +109,10 @@ public class MakananAdapter extends RecyclerView.Adapter<MakananAdapter.MenuView
 
     @Override
     public int getItemCount() {
-        return mLists.size();
+        return listMakanan.size();
     }
 
-    public class MenuViewHolder extends RecyclerView.ViewHolder {
+    public class MakananViewHolder extends RecyclerView.ViewHolder {
 
         ImageView mGambar;
         TextView mJudul, mPrice, mQty;
@@ -146,7 +122,7 @@ public class MakananAdapter extends RecyclerView.Adapter<MakananAdapter.MenuView
         CardView mCard;
 
 
-        MenuViewHolder(View itemView) {
+        MakananViewHolder(View itemView) {
             super(itemView);
             mGambar = itemView.findViewById(R.id.gambar);
             mJudul = itemView.findViewById(R.id.judul);
@@ -179,9 +155,9 @@ public class MakananAdapter extends RecyclerView.Adapter<MakananAdapter.MenuView
 
         private void dialogueDetail() {
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-            View rootDialog = LayoutInflater.from(mContext).inflate(R.layout.dialogue_detail, null);
-            Makanan clickedMakanan = mLists.get(position);
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            View rootDialog = LayoutInflater.from(context).inflate(R.layout.dialogue_detail, null);
+            Makanan clickedMakanan = listMakanan.get(position);
 
             final TextView judul = rootDialog.findViewById(R.id.judul);
 
@@ -190,7 +166,7 @@ public class MakananAdapter extends RecyclerView.Adapter<MakananAdapter.MenuView
             ImageView imageView = rootDialog.findViewById(R.id.gambar);
 
 
-            Glide.with(mContext).
+            Glide.with(context).
                     load(BASE_URL + "storage/makanan-photos/" + clickedMakanan.getFoto()).
                     placeholder(R.drawable.placeholder_makanan)
                     .into(imageView);
@@ -216,6 +192,46 @@ public class MakananAdapter extends RecyclerView.Adapter<MakananAdapter.MenuView
         }
 
 
+    }
+
+    private void countEstimatedPrice() {
+
+        Long hasil = 0l;
+
+        for (Makanan makananNow : listMakanan) {
+
+            hasil += makananNow.getHarga() * makananNow.getQty();
+
+        }
+
+        PilihMakananActivity.updateEstimatedPrice(hasil);
+        PilihMakananActivity.estimated.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(context, ConfirmActivity.class);
+                intent.putParcelableArrayListExtra("pesanan", arrangePesanan(listMakanan));
+                context.startActivity(intent);
+
+            }
+        });
+
+    }
+
+    private ArrayList<Makanan> arrangePesanan(ArrayList<Makanan> listMakanan) {
+
+        ArrayList<Makanan> hasil = new ArrayList<>();
+
+        for (Makanan makananNow : listMakanan) {
+
+            if (makananNow.getQty() > 0) {
+
+                hasil.add(makananNow) ;
+            }
+
+        }
+
+        return hasil;
     }
 
 }

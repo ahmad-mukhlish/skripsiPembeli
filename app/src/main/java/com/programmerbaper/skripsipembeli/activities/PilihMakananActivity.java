@@ -18,7 +18,7 @@ import com.programmerbaper.skripsipembeli.model.Pedagang;
 import com.programmerbaper.skripsipembeli.retrofit.api.APIClient;
 import com.programmerbaper.skripsipembeli.retrofit.api.APIInterface;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,12 +30,12 @@ public class PilihMakananActivity extends AppCompatActivity {
 
 
     private RecyclerView recyclerView;
-    private MakananAdapter adapter;
+    private MakananAdapter makananAdapter;
     private LinearLayoutManager layoutManager;
     private ProgressDialog dialog;
     private Pedagang pedagangTerpilih ;
 
-    private static List<Makanan> listMakanan;
+    private static ArrayList<Makanan> listMakanan;
     public static Button estimated;
 
     @Override
@@ -54,6 +54,7 @@ public class PilihMakananActivity extends AppCompatActivity {
 
         estimated = findViewById(R.id.estimate);
 
+
         getMakanan();
         setTitle("Pilihan Dagangan");
 
@@ -69,21 +70,21 @@ public class PilihMakananActivity extends AppCompatActivity {
     private void getMakanan() {
         dialog.show();
         APIInterface apiInterface = APIClient.getApiClient().create(APIInterface.class);
-        Call<List<Makanan>> call = apiInterface.makananPedagangGet(pedagangTerpilih.getIdPedagang()) ;
-        call.enqueue(new Callback<List<Makanan>>() {
+        Call<ArrayList<Makanan>> call = apiInterface.makananPedagangGet(pedagangTerpilih.getIdPedagang()) ;
+        call.enqueue(new Callback<ArrayList<Makanan>>() {
             @Override
-            public void onResponse(Call<List<Makanan>> call, Response<List<Makanan>> response) {
+            public void onResponse(Call<ArrayList<Makanan>> call, Response<ArrayList<Makanan>> response) {
                 dialog.dismiss();
-                List<Makanan> list = response.body();
+                ArrayList<Makanan> listMakanan = response.body();
 
-                adapter = new MakananAdapter(PilihMakananActivity.this, list);
-                recyclerView.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
+                makananAdapter = new MakananAdapter(PilihMakananActivity.this, listMakanan);
+                recyclerView.setAdapter(makananAdapter);
+                makananAdapter.notifyDataSetChanged();
 
             }
 
             @Override
-            public void onFailure(Call<List<Makanan>> call, Throwable t) {
+            public void onFailure(Call<ArrayList<Makanan>> call, Throwable t) {
                 dialog.dismiss();
                 t.printStackTrace();
                 Toast.makeText(PilihMakananActivity.this, "Terjadi Kesalahan Tidak Terduga", Toast.LENGTH_SHORT).show();
@@ -99,7 +100,7 @@ public class PilihMakananActivity extends AppCompatActivity {
             PilihMakananActivity.estimated.setVisibility(View.GONE);
         } else {
             PilihMakananActivity.estimated.setVisibility(View.VISIBLE);
-            PilihMakananActivity.estimated.setText("Estimated Price\t : \t" + Helper.formatter(estimated + ""));
+            PilihMakananActivity.estimated.setText("Perkiraan Harga\t : \t" + Helper.formatter(estimated + ""));
 
         }
 

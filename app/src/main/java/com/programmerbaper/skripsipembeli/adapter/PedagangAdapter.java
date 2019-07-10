@@ -25,22 +25,22 @@ import static com.programmerbaper.skripsipembeli.misc.Config.DATA_PEDAGANG_TERPI
 
 public class PedagangAdapter extends RecyclerView.Adapter<PedagangAdapter.PedagangViewHolder> {
 
-    private Context mContext;
-    private List<Pedagang> mList;
+    private Context context;
+    private List<Pedagang> listPedagang;
     private Activity parentActivity;
     private PedagangAdapter adapter;
     private ProgressDialog progressDialog = null;
 
-    public PedagangAdapter(Context mContext, List<Pedagang> mList, Activity parentActivity) {
-        this.mContext = mContext;
-        this.mList = mList;
+    public PedagangAdapter(Context context, List<Pedagang> listPedagang, Activity parentActivity) {
+        this.context = context;
+        this.listPedagang = listPedagang;
         this.parentActivity = parentActivity;
         this.adapter = this;
     }
 
     @Override
     public PedagangAdapter.PedagangViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        LayoutInflater inflater = LayoutInflater.from(mContext);
+        LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.card_pilih_pedagang, null, false);
         PedagangAdapter.PedagangViewHolder adapter = new PedagangAdapter.PedagangViewHolder(view);
 
@@ -59,8 +59,8 @@ public class PedagangAdapter extends RecyclerView.Adapter<PedagangAdapter.Pedaga
     @Override
     public void onBindViewHolder(final PedagangAdapter.PedagangViewHolder pedagangViewHolder, int i) {
         initProgressDialog();
-        final Pedagang pedagang = mList.get(i);
-        Glide.with(mContext)
+        final Pedagang pedagang = listPedagang.get(i);
+        Glide.with(context)
                 .load(BASE_URL + "storage/pedagang-profiles/" + pedagang.getFoto())
                 .placeholder(R.drawable.pedagang_holder)
                 .into(pedagangViewHolder.image);
@@ -73,10 +73,10 @@ public class PedagangAdapter extends RecyclerView.Adapter<PedagangAdapter.Pedaga
         pedagangViewHolder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, PilihMakananActivity.class);
+                Intent intent = new Intent(context, PilihMakananActivity.class);
                 intent.putExtra(DATA_PEDAGANG_TERPILIH, pedagang);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                mContext.startActivity(intent);
+                context.startActivity(intent);
             }
         });
 
@@ -110,7 +110,7 @@ public class PedagangAdapter extends RecyclerView.Adapter<PedagangAdapter.Pedaga
 
     @Override
     public int getItemCount() {
-        return mList.size();
+        return listPedagang.size();
     }
 
     public class PedagangViewHolder extends RecyclerView.ViewHolder {

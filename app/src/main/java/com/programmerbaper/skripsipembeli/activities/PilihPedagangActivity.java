@@ -34,7 +34,7 @@ public class PilihPedagangActivity extends AppCompatActivity {
 
 
     private RecyclerView recyclerView;
-    private PedagangAdapter adapter;
+    private PedagangAdapter pedagangAdapter;
     private LinearLayoutManager layoutManager;
     private ProgressDialog dialog;
 
@@ -95,9 +95,9 @@ public class PilihPedagangActivity extends AppCompatActivity {
                 dialog.dismiss();
                 List<Pedagang> list = response.body();
 
-                adapter = new PedagangAdapter(getApplicationContext(), list, PilihPedagangActivity.this);
-                recyclerView.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
+                pedagangAdapter = new PedagangAdapter(getApplicationContext(), list, PilihPedagangActivity.this);
+                recyclerView.setAdapter(pedagangAdapter);
+                pedagangAdapter.notifyDataSetChanged();
 
             }
 

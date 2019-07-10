@@ -3,38 +3,33 @@
     <string name="app_name">Pembeli</string>
     <string name="hint_username">Username</string>
     <string name="hint_password">Password</string>
+    <string name="hint_notes">Tambahkan catatan pesanan Anda disini (misal jangan pakai pedas dsb) </string>
 
     <!--labels-->
-    <string name="label_app_name"> Mr. Broto Resto </string>
-    <string name="label_item_name">Item Name</string>
-    <string name="label_qty">Qty</string>
+    <string name="label_item_name">Dagangan</string>
+    <string name="label_qty">Jumlah</string>
     <string name="label_sub_total">Sub Total</string>
-    <string name="label_sub_total_value">Sub total \t\t:</string>
-    <string name="label_ppn_value">PPN (10%) \t\t:</string>
-    <string name="label_grand_total_value">Grand Total \t:</string>
+    <string name="label_grand_total_value">Total \t:</string>
     <string name="label_feedback">Please rate our restaurant :</string>
-    <string name="label_version">Customer ver.</string>
-    <string name="label_no_internet_connection">No Internet Connection..</string>
+    <string name="label_no_internet_connection">Tidak ada koneksi internet..</string>
     <string name="label_minus_sign">-</string>
     <string name="label_plus_sign">+</string>
     <string name="label_zero">0</string>
-    <string name="label_no_food">No food has been billed yet</string>
-    <string name="label_swipe">Swipe up to see the menu..</string>
 
 
-    <string name="btn_sign_in">Sign in</string>
-    <string name="button_order">Order</string>
-    <string name="button_add">Add more items</string>
+    <string name="btn_sign_in">Login</string>
+    <string name="button_order">Pesan</string>
+    <string name="button_add">Tambah Lainnya</string>
     <string name="button_submit">Submit</string>
     <string name="button_login">login</string>
     <string name="button_ask_for_bill">ask for bill</string>
     <string name="button_ok">OK</string>
-    <string name="button_add_chef_note">Add Chef\'s Note</string>
-    <string name="button_edit_chef">Edit Chef\'s Note</string>
+    <string name="button_add_chef_note">Tambahkan Catatan</string>
+    <string name="button_edit_chef">Edit Catatan</string>
     <string name="button_empty_table">Empty table</string>
     <string name="button_logout">Log out</string>
-    <string name="button_add_order"> Add </string>
+    <string name="button_add_order"> Tambah </string>
     <string name="button_out">out of stock</string>
 
-
+    <string name="menu_note">Note</string>
 </resources>
