@@ -65,8 +65,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         if (view.getId() == R.id.btnLogin) {
 
-            Log.v("cik","cukk");
-
             String user = username.getText().toString();
             String pass = password.getText().toString();
 
@@ -121,7 +119,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         dialog.show();
 
         APIInterface apiInterface = APIClient.getApiClient().create(APIInterface.class);
-        Call<Pembeli> call = apiInterface.getUser(user, pass);
+        Call<Pembeli> call = apiInterface.login(user, pass);
         call.enqueue(new Callback<Pembeli>() {
             @Override
             public void onResponse(Call<Pembeli> call, Response<Pembeli> response) {

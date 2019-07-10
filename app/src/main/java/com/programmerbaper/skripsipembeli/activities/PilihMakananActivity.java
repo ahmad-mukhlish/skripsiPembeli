@@ -77,7 +77,7 @@ public class PilihMakananActivity extends AppCompatActivity {
                 dialog.dismiss();
                 ArrayList<Makanan> listMakanan = response.body();
 
-                makananAdapter = new MakananAdapter(PilihMakananActivity.this, listMakanan);
+                makananAdapter = new MakananAdapter(PilihMakananActivity.this, listMakanan,pedagangTerpilih.getIdPedagang());
                 recyclerView.setAdapter(makananAdapter);
                 makananAdapter.notifyDataSetChanged();
 

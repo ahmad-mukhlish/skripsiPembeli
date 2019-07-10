@@ -1,6 +1,18 @@
 package com.programmerbaper.skripsipembeli.activities;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -9,9 +21,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,28 +34,61 @@ import com.programmerbaper.skripsipembeli.R;
 import com.programmerbaper.skripsipembeli.adapter.PesananAdapter;
 import com.programmerbaper.skripsipembeli.misc.Helper;
 import com.programmerbaper.skripsipembeli.model.Makanan;
+import com.programmerbaper.skripsipembeli.retrofit.api.APIClient;
+import com.programmerbaper.skripsipembeli.retrofit.api.APIInterface;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static com.programmerbaper.skripsipembeli.misc.Config.ID_PEMBELI;
+import static com.programmerbaper.skripsipembeli.misc.Config.MY_PREFERENCES;
 
 public class ConfirmActivity extends AppCompatActivity {
 
-    private LinearLayoutManager layoutManager;
-    private RecyclerView recyclerView;
     private String catatan = "";
+    private String lokasi = "";
+    private int idPedagangTerpilih;
+    private ArrayList<Makanan> pesanan;
+    private double latitude;
+    private double longitude;
+    public static boolean permission = false;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm);
 
+        if (!permission) {
+            initPermission();
+        }
+
+        markPhoneToGetLatLong();
+
         Bundle bundle = getIntent().getExtras();
-        ArrayList<Makanan> pesanan = bundle.getParcelableArrayList("pesanan");
+        pesanan = bundle.getParcelableArrayList("pesanan");
+
+        idPedagangTerpilih = bundle.getInt("id_pedagang");
 
         PesananAdapter pesananAdapter =
                 new PesananAdapter(this, pesanan);
 
-        recyclerView = findViewById(R.id.rvCart);
-        layoutManager = new LinearLayoutManager(this);
+        RecyclerView recyclerView = findViewById(R.id.rvCart);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(pesananAdapter);
@@ -56,8 +104,7 @@ public class ConfirmActivity extends AppCompatActivity {
 
                 if (!catatan.isEmpty()) {
 
-                    //TODO POST PESANAN INTO TABLE TRANSAKSI HERE
-                    //TODO START TRACK THIS DEVICE BY STREAM LOKASI AT PEMBELI FOLDER IN FIREBASE
+                    dialogueLokasi();
 
 
                 } else {
@@ -118,7 +165,7 @@ public class ConfirmActivity extends AppCompatActivity {
         dialog.show();
 
 
-        TextView ok = rootDialog.findViewById(R.id.ok);
+        TextView ok = rootDialog.findViewById(R.id.konfirmasi_catatan);
         if (kode == 1) {
             ok.setText("Tambah catatan & pesan sekarang");
             ok.setOnClickListener(new View.OnClickListener() {
@@ -126,7 +173,7 @@ public class ConfirmActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     dialog.dismiss();
                     ConfirmActivity.this.catatan = keterangan.getText().toString();
-                    //TODO POST PESANAN HERE
+                    dialogueLokasi();
 
                 }
             });
@@ -144,6 +191,177 @@ public class ConfirmActivity extends AppCompatActivity {
                 }
             });
         }
+
+    }
+
+    private void dialogueLokasi() {
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View rootDialog = LayoutInflater.from(this).inflate(R.layout.dialogue_lokasi, null);
+        final EditText lokasi = rootDialog.findViewById(R.id.lokasi);
+        lokasi.setText(getLokasi());
+        lokasi.setSelection(lokasi.getText().length());
+
+        builder.setView(rootDialog);
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+
+        TextView ok = rootDialog.findViewById(R.id.konfirmasi_lokasi);
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                dialog.dismiss();
+                ConfirmActivity.this.lokasi = lokasi.getText().toString();
+                pesanPedagangKelilingOnline();
+
+            }
+        });
+
+
+    }
+
+    private JSONArray parsePesananToJSONArray(ArrayList<Makanan> pesanan) {
+
+        JSONArray jsonArray = new JSONArray();
+
+        for (Makanan makananNow : pesanan) {
+
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.accumulate("id_makanan", makananNow.getIdMakanan());
+                jsonObject.accumulate("jumlah", makananNow.getQty());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            jsonArray.put(jsonObject);
+
+        }
+
+        return jsonArray;
+    }
+
+    private void initPermission() {
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+                Toast.makeText(this, "Membutuhkan Izin Lokasi", Toast.LENGTH_SHORT).show();
+            } else {
+
+                // No explanation needed; request the permission
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                        1);
+            }
+        } else {
+            // Permission has already been granted
+            permission = true;
+            Toast.makeText(this, "Izin Lokasi diberikan", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    @SuppressLint("MissingPermission")
+    private void markPhoneToGetLatLong() {
+
+        LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        LocationListener mLocationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+
+
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+
+                //TODO WRITE THIS LAT LONG TO FIREBASE? OR CREATE A NEW SERVICE?
+            }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+
+            }
+        };
+
+
+        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1, 1, mLocationListener);
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, mLocationListener);
+
+
+    }
+
+    private String getLokasi() {
+
+        Geocoder geocoder;
+        List<Address> addresses = null;
+        geocoder = new Geocoder(this, Locale.getDefault());
+
+        try {
+            addresses = geocoder.getFromLocation(latitude, longitude, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return addresses.get(0).getAddressLine(0);
+
+    }
+
+    private String getTanggal() {
+
+        Date c = Calendar.getInstance().getTime();
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        return df.format(c);
+
+    }
+
+    private void pesanPedagangKelilingOnline() {
+
+
+        SharedPreferences pref = getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE);
+        String idPembeli = pref.getString(ID_PEMBELI, "");
+
+        APIInterface apiInterface = APIClient.getApiClient().create(APIInterface.class);
+        Call<String> call = apiInterface.pesanPedagangBerkelilingPost
+                (Integer.parseInt(idPembeli), idPedagangTerpilih, catatan, lokasi, getTanggal(), parsePesananToJSONArray(pesanan));
+
+
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+
+                if (response.body().equals("Pesanan Berhasil Diterima")) {
+                    Toast.makeText(ConfirmActivity.this, "Pesanan Telah Terkirim", Toast.LENGTH_SHORT).show();
+                    ConfirmActivity.this.startActivity(new Intent(ConfirmActivity.this, PilihPedagangActivity.class));
+
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.v("cik", t.toString());
+            }
+        });
+
 
     }
 

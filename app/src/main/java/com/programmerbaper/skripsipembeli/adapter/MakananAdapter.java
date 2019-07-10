@@ -30,10 +30,12 @@ public class MakananAdapter extends RecyclerView.Adapter<MakananAdapter.MakananV
 
     private Context context;
     private ArrayList<Makanan> listMakanan;
+    private int idPedagangTerpilih ;
 
-    public MakananAdapter(Context context, ArrayList<Makanan> listMakanan) {
+    public MakananAdapter(Context context, ArrayList<Makanan> listMakanan, int idPedagangTerpilih) {
         this.context = context;
         this.listMakanan = listMakanan;
+        this.idPedagangTerpilih = idPedagangTerpilih;
     }
 
     @Override
@@ -211,6 +213,7 @@ public class MakananAdapter extends RecyclerView.Adapter<MakananAdapter.MakananV
 
                 Intent intent = new Intent(context, ConfirmActivity.class);
                 intent.putParcelableArrayListExtra("pesanan", arrangePesanan(listMakanan));
+                intent.putExtra("id_pedagang",idPedagangTerpilih);
                 context.startActivity(intent);
 
             }

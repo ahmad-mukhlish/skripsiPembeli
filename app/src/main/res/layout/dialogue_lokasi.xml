@@ -17,18 +17,17 @@
 
 
         <EditText
-            android:id="@+id/keterangan"
+            android:id="@+id/lokasi"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:hint="@string/hint_notes"
             android:textColor="#000000"
             android:textSize="14sp" />
 
     </androidx.cardview.widget.CardView>
 
     <Button
-        android:id="@+id/konfirmasi_catatan"
+        android:id="@+id/konfirmasi_lokasi"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
         android:padding="5dp"
@@ -37,7 +36,7 @@
         android:layout_marginBottom="20dp"
         android:layout_marginTop="20dp"
         android:background="@color/colorPrimaryDark"
-        android:text="@string/button_add_chef_note"
+        android:text="Konfirmasi Lokasi Saya"
         android:textColor="#FFFFFF"
         android:textSize="15sp" />
 
