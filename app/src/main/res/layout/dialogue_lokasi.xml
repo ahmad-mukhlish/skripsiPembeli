@@ -17,7 +17,7 @@
 
 
         <EditText
-            android:id="@+id/lokasi"
+            android:id="@+id/alamat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -27,7 +27,7 @@
     </androidx.cardview.widget.CardView>
 
     <Button
-        android:id="@+id/konfirmasi_lokasi"
+        android:id="@+id/konfirmasi_alamat"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
         android:padding="5dp"
@@ -36,7 +36,7 @@
         android:layout_marginBottom="20dp"
         android:layout_marginTop="20dp"
         android:background="@color/colorPrimaryDark"
-        android:text="Konfirmasi Lokasi Saya"
+        android:text="Konfirmasi Alamat"
         android:textColor="#FFFFFF"
         android:textSize="15sp" />
 

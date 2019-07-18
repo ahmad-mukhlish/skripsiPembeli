@@ -44,6 +44,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -59,7 +60,7 @@ import static com.programmerbaper.skripsipembeli.misc.Config.MY_PREFERENCES;
 public class ConfirmActivity extends AppCompatActivity {
 
     private String catatan = "";
-    private String lokasi = "";
+    private String alamat = "";
     private int idPedagangTerpilih;
     private ArrayList<Makanan> pesanan;
     private double latitude;
@@ -87,7 +88,7 @@ public class ConfirmActivity extends AppCompatActivity {
         PesananAdapter pesananAdapter =
                 new PesananAdapter(this, pesanan);
 
-        RecyclerView recyclerView = findViewById(R.id.rvCart);
+        RecyclerView recyclerView = findViewById(R.id.rvPesanan);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
         recyclerView.setLayoutManager(layoutManager);
@@ -104,7 +105,7 @@ public class ConfirmActivity extends AppCompatActivity {
 
                 if (!catatan.isEmpty()) {
 
-                    dialogueLokasi();
+                    dialogueAlamat();
 
 
                 } else {
@@ -130,7 +131,7 @@ public class ConfirmActivity extends AppCompatActivity {
     private int hitungSub(ArrayList<Makanan> listMakanan) {
         int sub = 0;
         for (Makanan makananNow : listMakanan) {
-            sub += makananNow.getHarga() * makananNow.getQty();
+            sub += makananNow.getHarga() * makananNow.getJumlah();
         }
         return sub;
     }
@@ -173,7 +174,7 @@ public class ConfirmActivity extends AppCompatActivity {
                 public void onClick(View view) {
                     dialog.dismiss();
                     ConfirmActivity.this.catatan = keterangan.getText().toString();
-                    dialogueLokasi();
+                    dialogueAlamat();
 
                 }
             });
@@ -194,27 +195,27 @@ public class ConfirmActivity extends AppCompatActivity {
 
     }
 
-    private void dialogueLokasi() {
+    private void dialogueAlamat() {
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View rootDialog = LayoutInflater.from(this).inflate(R.layout.dialogue_lokasi, null);
-        final EditText lokasi = rootDialog.findViewById(R.id.lokasi);
-        lokasi.setText(getLokasi());
-        lokasi.setSelection(lokasi.getText().length());
+        final EditText alamat = rootDialog.findViewById(R.id.alamat);
+        alamat.setText(getAlamat());
+        alamat.setSelection(alamat.getText().length());
 
         builder.setView(rootDialog);
         final AlertDialog dialog = builder.create();
         dialog.show();
 
 
-        TextView ok = rootDialog.findViewById(R.id.konfirmasi_lokasi);
+        TextView ok = rootDialog.findViewById(R.id.konfirmasi_alamat);
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 dialog.dismiss();
-                ConfirmActivity.this.lokasi = lokasi.getText().toString();
+                ConfirmActivity.this.alamat = alamat.getText().toString();
                 pesanPedagangKelilingOnline();
 
             }
@@ -232,7 +233,7 @@ public class ConfirmActivity extends AppCompatActivity {
             JSONObject jsonObject = new JSONObject();
             try {
                 jsonObject.accumulate("id_makanan", makananNow.getIdMakanan());
-                jsonObject.accumulate("jumlah", makananNow.getQty());
+                jsonObject.accumulate("jumlah", makananNow.getJumlah());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -307,7 +308,7 @@ public class ConfirmActivity extends AppCompatActivity {
 
     }
 
-    private String getLokasi() {
+    private String getAlamat() {
 
         Geocoder geocoder;
         List<Address> addresses = null;
@@ -320,6 +321,14 @@ public class ConfirmActivity extends AppCompatActivity {
         }
 
         return addresses.get(0).getAddressLine(0);
+
+    }
+
+    private String getArea() {
+
+        List<String> alamatList = Arrays.asList(alamat.split(",[ ]*"));
+
+        return alamatList.get(1);
 
     }
 
@@ -340,18 +349,29 @@ public class ConfirmActivity extends AppCompatActivity {
 
         APIInterface apiInterface = APIClient.getApiClient().create(APIInterface.class);
         Call<String> call = apiInterface.pesanPedagangBerkelilingPost
-                (Integer.parseInt(idPembeli), idPedagangTerpilih, catatan, lokasi, getTanggal(), parsePesananToJSONArray(pesanan));
-
+                (Integer.parseInt(idPembeli), idPedagangTerpilih, catatan, alamat, getArea(),latitude, longitude, getTanggal(), parsePesananToJSONArray(pesanan));
 
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
 
-                if (response.body().equals("Pesanan Berhasil Diterima")) {
-                    Toast.makeText(ConfirmActivity.this, "Pesanan Telah Terkirim", Toast.LENGTH_SHORT).show();
-                    ConfirmActivity.this.startActivity(new Intent(ConfirmActivity.this, PilihPedagangActivity.class));
+                if (response.body() != null) {
+                    if (response.body().equals("Pesanan Berhasil Diterima")) {
+                        Toast.makeText(ConfirmActivity.this, "Pesanan Telah Terkirim", Toast.LENGTH_SHORT).show();
+                        ConfirmActivity.this.startActivity(new Intent(ConfirmActivity.this, PilihPedagangActivity.class));
+
+                    }
+                } else {
+
+                    try {
+                        Log.v("cik",response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
                 }
+
+
 
 
             }

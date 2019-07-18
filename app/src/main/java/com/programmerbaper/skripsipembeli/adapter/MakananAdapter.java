@@ -51,55 +51,55 @@ public class MakananAdapter extends RecyclerView.Adapter<MakananAdapter.MakananV
         Glide.with(context).
                 load(BASE_URL + "storage/makanan-photos/" + makananNow.getFoto()).
                 placeholder(R.drawable.placeholder_makanan).
-                into(holder.mGambar);
+                into(holder.foto);
 
 
-        holder.mGambar.setOnClickListener(new ProdukListener(position));
+        holder.foto.setOnClickListener(new ProdukListener(position));
 
-        holder.mJudul.setText(makananNow.getNama());
-        holder.mQty.setText(makananNow.getQty() + "");
-        holder.mPrice.setText(Helper.formatter("" + makananNow.getHarga()));
+        holder.nama.setText(makananNow.getNama());
+        holder.jumlah.setText(makananNow.getJumlah() + "");
+        holder.harga.setText(Helper.formatter("" + makananNow.getHarga()));
 
 
-        holder.mPlus.setOnClickListener(new View.OnClickListener() {
+        holder.plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int qty = makananNow.getQty();
+                int qty = makananNow.getJumlah();
                 qty++;
-                makananNow.setQty(qty);
-                holder.mQty.setText(qty + "");
+                makananNow.setJumlah(qty);
+                holder.jumlah.setText(qty + "");
 
                 countEstimatedPrice();
 
             }
         });
 
-        holder.mMinus.setOnClickListener(new View.OnClickListener() {
+        holder.minus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int qty = makananNow.getQty();
+                int qty = makananNow.getJumlah();
 
                 if (qty > 1) {
                     qty--;
-                    makananNow.setQty(qty);
-                    holder.mQty.setText(qty + "");
+                    makananNow.setJumlah(qty);
+                    holder.jumlah.setText(qty + "");
                 } else {
-                    makananNow.setQty(0);
-                    holder.mQtySet.setVisibility(View.GONE);
-                    holder.mAdd.setVisibility(View.VISIBLE);
+                    makananNow.setJumlah(0);
+                    holder.setJumlah.setVisibility(View.GONE);
+                    holder.tambah.setVisibility(View.VISIBLE);
                 }
 
                 countEstimatedPrice();
             }
         });
 
-        holder.mAdd.setOnClickListener(new View.OnClickListener() {
+        holder.tambah.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                holder.mAdd.setVisibility(View.GONE);
-                holder.mQtySet.setVisibility(View.VISIBLE);
-                makananNow.setQty(1);
-                holder.mQty.setText(makananNow.getQty() + "");
+                holder.tambah.setVisibility(View.GONE);
+                holder.setJumlah.setVisibility(View.VISIBLE);
+                makananNow.setJumlah(1);
+                holder.jumlah.setText(makananNow.getJumlah() + "");
 
                 countEstimatedPrice();
 
@@ -116,26 +116,26 @@ public class MakananAdapter extends RecyclerView.Adapter<MakananAdapter.MakananV
 
     public class MakananViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView mGambar;
-        TextView mJudul, mPrice, mQty;
-        View mItemView;
-        Button mPlus, mMinus, mAdd;
-        RelativeLayout mQtySet;
-        CardView mCard;
+        ImageView foto;
+        TextView nama, harga, jumlah;
+        View view;
+        Button plus, minus, tambah;
+        RelativeLayout setJumlah;
+        CardView card;
 
 
         MakananViewHolder(View itemView) {
             super(itemView);
-            mGambar = itemView.findViewById(R.id.gambar);
-            mJudul = itemView.findViewById(R.id.judul);
-            mPrice = itemView.findViewById(R.id.price);
-            mQty = itemView.findViewById(R.id.qty);
-            mPlus = itemView.findViewById(R.id.plus);
-            mMinus = itemView.findViewById(R.id.minus);
-            mAdd = itemView.findViewById(R.id.btn_add_order);
-            mQtySet = itemView.findViewById(R.id.qty_set);
-            mCard = itemView.findViewById(R.id.card);
-            mItemView = itemView;
+            foto = itemView.findViewById(R.id.foto);
+            nama = itemView.findViewById(R.id.nama);
+            harga = itemView.findViewById(R.id.harga);
+            jumlah = itemView.findViewById(R.id.jumlah);
+            plus = itemView.findViewById(R.id.plus);
+            minus = itemView.findViewById(R.id.minus);
+            tambah = itemView.findViewById(R.id.btn_tambah);
+            setJumlah = itemView.findViewById(R.id.set_jumlah);
+            card = itemView.findViewById(R.id.card);
+            view = itemView;
         }
 
 
@@ -161,11 +161,11 @@ public class MakananAdapter extends RecyclerView.Adapter<MakananAdapter.MakananV
             View rootDialog = LayoutInflater.from(context).inflate(R.layout.dialogue_detail, null);
             Makanan clickedMakanan = listMakanan.get(position);
 
-            final TextView judul = rootDialog.findViewById(R.id.judul);
+            final TextView judul = rootDialog.findViewById(R.id.nama);
 
             TextView deskripsi = rootDialog.findViewById(R.id.deskripsi);
             TextView harga = rootDialog.findViewById(R.id.harga);
-            ImageView imageView = rootDialog.findViewById(R.id.gambar);
+            ImageView imageView = rootDialog.findViewById(R.id.foto);
 
 
             Glide.with(context).
@@ -202,7 +202,7 @@ public class MakananAdapter extends RecyclerView.Adapter<MakananAdapter.MakananV
 
         for (Makanan makananNow : listMakanan) {
 
-            hasil += makananNow.getHarga() * makananNow.getQty();
+            hasil += makananNow.getHarga() * makananNow.getJumlah();
 
         }
 
@@ -227,7 +227,7 @@ public class MakananAdapter extends RecyclerView.Adapter<MakananAdapter.MakananV
 
         for (Makanan makananNow : listMakanan) {
 
-            if (makananNow.getQty() > 0) {
+            if (makananNow.getJumlah() > 0) {
 
                 hasil.add(makananNow) ;
             }

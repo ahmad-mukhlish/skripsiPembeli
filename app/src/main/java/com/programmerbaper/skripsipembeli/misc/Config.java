@@ -11,7 +11,7 @@ public class Config {
     public static final String BASE_URL_OWM = "http://api.openweathermap.org/data/2.5/";
     public static final String API_KEY_OWM = "f70a95166eddb51376e93d2fe00e922b";
 
-    public static final String BASE_URL_API = "http://192.168.1.2/api/pembeli/";
-    public static final String BASE_URL = "http://192.168.1.2/";
+    public static final String BASE_URL = "http://192.168.1.5/";
+    public static final String BASE_URL_API = "http://192.168.1.5/api/pembeli/";
 
 }

@@ -31,11 +31,14 @@ public interface APIInterface {
     @FormUrlEncoded
     @POST("pesanPedagangBerkelilingPost")
     Call<String> pesanPedagangBerkelilingPost(@Field("id_pembeli") int idPembeli,
-                                               @Field("id_pedagang") int idPedagang,
+                                              @Field("id_pedagang") int idPedagang,
                                               @Field("catatan") String catatan,
-                                               @Field("lokasi") String lokasi,
+                                              @Field("alamat") String alamat,
+                                              @Field("area") String area,
+                                              @Field("latitude") double latitude,
+                                              @Field("longitude") double longitude,
                                               @Field("tanggal") String tanggal,
-                                               @Field("listPesanan") JSONArray listPesanan);
+                                              @Field("listPesanan") JSONArray listPesanan);
 
 
 }

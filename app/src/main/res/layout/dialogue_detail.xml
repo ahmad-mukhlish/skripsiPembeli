@@ -7,7 +7,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/judul"
+        android:id="@+id/nama"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
@@ -33,7 +33,7 @@
 
 
             <ImageView
-                android:id="@+id/gambar"
+                android:id="@+id/foto"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
                 android:adjustViewBounds="true"

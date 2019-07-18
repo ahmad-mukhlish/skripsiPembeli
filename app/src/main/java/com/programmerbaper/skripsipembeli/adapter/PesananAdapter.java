@@ -35,9 +35,9 @@ public class PesananAdapter extends RecyclerView.Adapter<PesananAdapter.PesananV
     @Override
     public void onBindViewHolder(final PesananViewHolder holder, int position) {
         final Makanan makananNow = listPesanan.get(position);
-        holder.mJudul.setText(makananNow.getNama());
-        holder.mPrice.setText(Helper.formatter("" + (makananNow.getHarga() * makananNow.getQty())));
-        holder.mQty.setText(makananNow.getQty() + "");
+        holder.jumlah.setText(makananNow.getNama());
+        holder.harga.setText(Helper.formatter("" + (makananNow.getHarga() * makananNow.getJumlah())));
+        holder.nama.setText(makananNow.getJumlah() + "");
         if (position % 2 != 0) {
             holder.mItemView.setBackgroundColor(Color.rgb(255, 255, 255));
         }
@@ -52,15 +52,15 @@ public class PesananAdapter extends RecyclerView.Adapter<PesananAdapter.PesananV
 
     class PesananViewHolder extends RecyclerView.ViewHolder {
 
-        TextView mJudul, mPrice, mQty;
+        TextView jumlah, harga, nama;
         View mItemView;
 
 
         PesananViewHolder(View itemView) {
             super(itemView);
-            mJudul = itemView.findViewById(R.id.judul);
-            mPrice = itemView.findViewById(R.id.price);
-            mQty = itemView.findViewById(R.id.qty);
+            jumlah = itemView.findViewById(R.id.nama);
+            harga = itemView.findViewById(R.id.harga);
+            nama = itemView.findViewById(R.id.jumlah);
             mItemView = itemView;
         }
 

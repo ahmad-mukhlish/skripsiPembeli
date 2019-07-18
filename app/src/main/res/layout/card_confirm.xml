@@ -7,7 +7,7 @@
 
 
     <TextView
-        android:id="@+id/judul"
+        android:id="@+id/nama"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -20,7 +20,7 @@
 
 
     <TextView
-        android:id="@+id/qty"
+        android:id="@+id/jumlah"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -30,7 +30,7 @@
 
 
     <TextView
-        android:id="@+id/price"
+        android:id="@+id/harga"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"

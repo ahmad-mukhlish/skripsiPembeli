@@ -25,7 +25,7 @@
                 android:layout_height="match_parent">
 
                 <ImageView
-                    android:id="@+id/gambar"
+                    android:id="@+id/foto"
                     android:layout_width="125dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
@@ -36,31 +36,31 @@
 
 
                 <TextView
-                    android:id="@+id/judul"
+                    android:id="@+id/nama"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="8dp"
-                    android:layout_toEndOf="@id/gambar"
+                    android:layout_toEndOf="@id/foto"
                     android:textColor="#000000"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     tool:text="Burger" />
 
                 <TextView
-                    android:id="@+id/price"
+                    android:id="@+id/harga"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/judul"
+                    android:layout_below="@id/nama"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="8dp"
-                    android:layout_toEndOf="@id/gambar"
+                    android:layout_toEndOf="@id/foto"
                     android:textColor="@color/colorPrimary"
                     android:textSize="15sp"
                     tool:text="Rp 15000" />
 
                 <Button
-                    android:id="@+id/btn_add_order"
+                    android:id="@+id/btn_tambah"
                     android:layout_width="80dp"
                     android:layout_height="40dp"
                     android:layout_alignParentBottom="true"
@@ -77,7 +77,7 @@
 
 
                 <RelativeLayout
-                    android:id="@+id/qty_set"
+                    android:id="@+id/set_jumlah"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
@@ -86,7 +86,7 @@
                     android:visibility="gone">
 
                     <TextView
-                        android:id="@+id/qty"
+                        android:id="@+id/jumlah"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
@@ -102,7 +102,7 @@
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:layout_marginEnd="4dp"
-                        android:layout_toEndOf="@id/qty"
+                        android:layout_toEndOf="@id/jumlah"
                         android:background="@color/colorPrimary"
                         android:text="@string/label_plus_sign"
                         android:textAlignment="center"

@@ -27,14 +27,14 @@ public class Makanan implements Parcelable {
     @Expose
     private int idPemilik;
 
-    private int qty ;
+    private int jumlah;
 
-    public int getQty() {
-        return qty;
+    public int getJumlah() {
+        return jumlah;
     }
 
-    public void setQty(int qty) {
-        this.qty = qty;
+    public void setJumlah(int jumlah) {
+        this.jumlah = jumlah;
     }
 
     public int getIdMakanan() {
@@ -93,7 +93,7 @@ public class Makanan implements Parcelable {
         harga = in.readInt();
         deskripsi = in.readString();
         idPemilik = in.readInt();
-        qty = in.readInt();
+        jumlah = in.readInt();
     }
 
     @Override
@@ -109,7 +109,7 @@ public class Makanan implements Parcelable {
         dest.writeInt(harga);
         dest.writeString(deskripsi);
         dest.writeInt(idPemilik);
-        dest.writeInt(qty);
+        dest.writeInt(jumlah);
     }
 
     @SuppressWarnings("unused")
