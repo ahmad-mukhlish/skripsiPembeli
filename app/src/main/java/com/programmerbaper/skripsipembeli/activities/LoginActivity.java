@@ -16,8 +16,12 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.programmerbaper.skripsipembeli.R;
 import com.programmerbaper.skripsipembeli.model.Pembeli;
 import com.programmerbaper.skripsipembeli.retrofit.api.APIClient;
@@ -27,6 +31,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.programmerbaper.skripsipembeli.misc.Config.FCM_TOKEN;
 import static com.programmerbaper.skripsipembeli.misc.Config.ID_PEMBELI;
 import static com.programmerbaper.skripsipembeli.misc.Config.MY_PREFERENCES;
 import static com.programmerbaper.skripsipembeli.misc.Config.PASSWORD;
@@ -133,7 +138,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     editor.putString(PASSWORD, String.valueOf(pembeli.getPassword()));
                     editor.apply();
 
-                    writePembeliToFirebase(pembeli.getIdPembeli(),pembeli.getUsername());
+                    tokenize();
+
+                    writePembeliToFirebase(pembeli.getIdPembeli(), pembeli.getUsername());
 
                     Intent intent = new Intent(LoginActivity.this, PilihPedagangActivity.class);
                     startActivity(intent);
@@ -148,8 +155,82 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onFailure(Call<Pembeli> call, Throwable t) {
                 dialog.dismiss();
                 t.printStackTrace();
-                Log.v("cik",t.getMessage());
+                Log.v("cik", t.getMessage());
                 Toast.makeText(LoginActivity.this, "Terjadi Kesalahan Tidak Terduga", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void tokenize() {
+
+        //Check wether token exist or not at shared pref and dbase
+        pref = getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE);
+        if (pref.getString(FCM_TOKEN, "").isEmpty()) {
+
+            Log.v("cik", "empty mang");
+            APIInterface apiInterface = APIClient.getApiClient().create(APIInterface.class);
+            Call<String> call = apiInterface.retrieveTokenByIDGet(Integer.parseInt(pref.getString(ID_PEMBELI, "")));
+            call.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+
+                    if(response.body().isEmpty()) {
+
+                        getTokenFromFcm();
+
+                    } else {
+                        editor = pref.edit();
+                        editor.putString(FCM_TOKEN, response.body());
+                        editor.apply();
+
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+
+                    dialog.dismiss();
+                    t.printStackTrace();
+                    Log.v("cik", t.getMessage());
+                    Toast.makeText(LoginActivity.this, "Terjadi Kesalahan Tidak Terduga Pada FCM", Toast.LENGTH_SHORT).show();
+
+                }
+            });
+
+
+        }
+
+        FirebaseMessaging.getInstance().subscribeToTopic("test") ;
+    }
+
+    private void getTokenFromFcm() {
+
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(this, new OnSuccessListener<InstanceIdResult>() {
+            @Override
+            public void onSuccess(InstanceIdResult instanceIdResult) {
+                String token = instanceIdResult.getToken();
+
+                editor = pref.edit();
+                editor.putString(FCM_TOKEN, token);
+                editor.apply();
+
+                APIInterface apiInterface = APIClient.getApiClient().create(APIInterface.class);
+                Call<String> call = apiInterface.saveTokenByIDPost(Integer.parseInt(pref.getString(ID_PEMBELI, "")), token);
+                call.enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        Log.v("cik", response.body());
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        Log.v("cik", t.getMessage());
+                    }
+                });
+
+
             }
         });
     }

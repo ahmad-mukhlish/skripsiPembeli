@@ -1,0 +1,30 @@
+package com.programmerbaper.skripsipembeli.services;
+
+
+import android.util.Log;
+
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
+
+
+public class MyFirebaseMessagingService extends FirebaseMessagingService {
+
+    @Override
+    public void onNewToken(String token) {
+        super.onNewToken(token);
+    }
+
+    @Override
+    public void onMessageReceived(RemoteMessage remoteMessage) {
+
+        showNotification(remoteMessage.getNotification().getBody());
+    }
+
+    private void showNotification(String message) {
+
+     Log.v("cik",message);
+
+
+    }
+}
+

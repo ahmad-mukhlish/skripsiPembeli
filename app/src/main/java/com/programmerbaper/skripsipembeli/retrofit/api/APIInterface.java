@@ -40,5 +40,13 @@ public interface APIInterface {
                                               @Field("tanggal") String tanggal,
                                               @Field("listPesanan") JSONArray listPesanan);
 
+    @GET("retrieveTokenByIDGet/{id_pembeli}")
+    Call<String> retrieveTokenByIDGet(@Path("id_pembeli") int idPembeli);
+
+    @FormUrlEncoded
+    @POST("saveTokenByIDPost")
+    Call<String> saveTokenByIDPost(@Field("id_pembeli") int idPembeli,
+                                   @Field("fcm_token") String fcmToken) ;
+
 
 }

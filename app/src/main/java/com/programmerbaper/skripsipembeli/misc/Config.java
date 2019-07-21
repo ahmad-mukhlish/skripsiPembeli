@@ -5,6 +5,7 @@ public class Config {
     public static final String MY_PREFERENCES = "MY_PREF";
     public static final String ID_PEMBELI = "ID_PEMBELI";
     public static final String DATA_PEDAGANG_TERPILIH = "DATA_PEDAGANG_TERPILIH";
+    public static final String FCM_TOKEN = "FCM_TOKEN";
     public static final String USERNAME = "USERNAME";
     public static final String PASSWORD = "PASSWORD";
 
