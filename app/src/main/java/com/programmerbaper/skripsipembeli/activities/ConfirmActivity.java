@@ -373,7 +373,6 @@ public class ConfirmActivity extends AppCompatActivity {
 
 
 
-
             }
 
             @Override
