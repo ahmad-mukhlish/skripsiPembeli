@@ -68,7 +68,6 @@ public class ConfirmActivity extends AppCompatActivity {
     public static boolean permission = false;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -349,7 +348,7 @@ public class ConfirmActivity extends AppCompatActivity {
 
         APIInterface apiInterface = APIClient.getApiClient().create(APIInterface.class);
         Call<String> call = apiInterface.pesanPedagangBerkelilingPost
-                (Integer.parseInt(idPembeli), idPedagangTerpilih, catatan, alamat, getArea(),latitude, longitude, getTanggal(), parsePesananToJSONArray(pesanan));
+                (Integer.parseInt(idPembeli), idPedagangTerpilih, catatan, alamat, getArea(), latitude, longitude, getTanggal(), parsePesananToJSONArray(pesanan));
 
         call.enqueue(new Callback<String>() {
             @Override
@@ -357,20 +356,19 @@ public class ConfirmActivity extends AppCompatActivity {
 
                 if (response.body() != null) {
                     if (response.body().equals("Pesanan Berhasil Diterima")) {
-                        Toast.makeText(ConfirmActivity.this, "Pesanan Telah Terkirim", Toast.LENGTH_SHORT).show();
-                        ConfirmActivity.this.startActivity(new Intent(ConfirmActivity.this, PilihPedagangActivity.class));
+                        notifPesanan();
+
 
                     }
                 } else {
 
                     try {
-                        Log.v("cik",response.errorBody().string());
+                        Log.v("cik", response.errorBody().string());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
 
                 }
-
 
 
             }
@@ -382,6 +380,26 @@ public class ConfirmActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    private void notifPesanan() {
+
+        APIInterface apiInterface = APIClient.getApiClient().create(APIInterface.class);
+        Call<String> call = apiInterface.notifPesan(getArea(), hitungSub(pesanan) + "", idPedagangTerpilih);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.body().equals("Pesanan berhasil di notif")) {
+                    Toast.makeText(ConfirmActivity.this, "Pesanan Telah Terkirim", Toast.LENGTH_SHORT).show();
+                    //TODO Intent to detail trans here
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+
+            }
+        });
     }
 
 }

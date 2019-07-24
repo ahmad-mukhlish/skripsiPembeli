@@ -48,5 +48,10 @@ public interface APIInterface {
     Call<String> saveTokenByIDPost(@Field("id_pembeli") int idPembeli,
                                    @Field("fcm_token") String fcmToken) ;
 
+    @FormUrlEncoded
+    @POST("notifPesan")
+    Call<String> notifPesan(@Field("area") String area,
+                            @Field("nilai") String nilai,
+                            @Field("id_pedagang") int idPedagang);
 
 }
