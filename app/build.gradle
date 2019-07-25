@@ -52,6 +52,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:19.0.1'
     implementation 'com.google.firebase:firebase-inappmessaging-display:18.0.1'
 
+    //sliding up panel
+    implementation 'com.sothree.slidinguppanel:library:3.4.0'
+
     implementation 'androidx.multidex:multidex:2.0.1'
 
     testImplementation 'junit:junit:4.12'

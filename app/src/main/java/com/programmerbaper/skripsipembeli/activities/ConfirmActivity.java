@@ -2,6 +2,7 @@ package com.programmerbaper.skripsipembeli.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -34,6 +35,7 @@ import com.programmerbaper.skripsipembeli.R;
 import com.programmerbaper.skripsipembeli.adapter.PesananAdapter;
 import com.programmerbaper.skripsipembeli.misc.Helper;
 import com.programmerbaper.skripsipembeli.model.Makanan;
+import com.programmerbaper.skripsipembeli.model.Transaksi;
 import com.programmerbaper.skripsipembeli.retrofit.api.APIClient;
 import com.programmerbaper.skripsipembeli.retrofit.api.APIInterface;
 
@@ -65,7 +67,11 @@ public class ConfirmActivity extends AppCompatActivity {
     private ArrayList<Makanan> pesanan;
     private double latitude;
     private double longitude;
+    private int idTransaksi;
+    private ProgressDialog dialog;
+
     public static boolean permission = false;
+
 
 
     @Override
@@ -123,9 +129,18 @@ public class ConfirmActivity extends AppCompatActivity {
             }
         });
 
-
+        initProgressDialog();
         setTitle("Konfirmasi Pesanan");
     }
+
+
+    private void initProgressDialog() {
+        dialog = new ProgressDialog(this);
+        dialog.setTitle("Mengambil Detail Transaksi");
+        dialog.setMessage("Sedang Memuat..");
+        dialog.setCancelable(false);
+    }
+
 
     private int hitungSub(ArrayList<Makanan> listMakanan) {
         int sub = 0;
@@ -281,7 +296,6 @@ public class ConfirmActivity extends AppCompatActivity {
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
 
-                //TODO WRITE THIS LAT LONG TO FIREBASE? OR CREATE A NEW SERVICE?
             }
 
             @Override
@@ -340,6 +354,34 @@ public class ConfirmActivity extends AppCompatActivity {
 
     }
 
+
+    private void getTransaksi(int idTransaksi) {
+
+        dialog.show();
+        APIInterface apiInterface = APIClient.getApiClient().create(APIInterface.class);
+
+        Call<Transaksi> call = apiInterface.transaksiByIDGet(idTransaksi) ;
+        call.enqueue(new Callback<Transaksi>() {
+            @Override
+            public void onResponse(Call<Transaksi> call, Response<Transaksi> response) {
+                dialog.dismiss();
+                Transaksi transaksi = response.body();
+                Intent intent = new Intent(ConfirmActivity.this, DetailTransaksiActivity.class);
+                intent.putExtra("DATA_TRANSAKSI",transaksi);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onFailure(Call<Transaksi> call, Throwable t) {
+                dialog.dismiss();
+                t.printStackTrace();
+                Toast.makeText(ConfirmActivity.this, "Terjadi Kesalahan Tidak Terduga", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+    }
+
     private void pesanPedagangKelilingOnline() {
 
 
@@ -355,11 +397,10 @@ public class ConfirmActivity extends AppCompatActivity {
             public void onResponse(Call<String> call, Response<String> response) {
 
                 if (response.body() != null) {
-                    if (response.body().equals("Pesanan Berhasil Diterima")) {
-                        notifPesanan();
+                    idTransaksi = Integer.parseInt(response.body());
+                    notifPesanan();
 
 
-                    }
                 } else {
 
                     try {
@@ -391,7 +432,10 @@ public class ConfirmActivity extends AppCompatActivity {
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.body().equals("Pesanan berhasil di notif")) {
                     Toast.makeText(ConfirmActivity.this, "Pesanan Telah Terkirim", Toast.LENGTH_SHORT).show();
-                    //TODO Intent to detail trans here
+                    getTransaksi(idTransaksi);
+
+                } else if (response.body().equals("Pedagang tidak tersedia (Token pedagang tidak tersedia)")) {
+                    Toast.makeText(ConfirmActivity.this, "Pedagang tidak tersedia (Token pedagang tidak tersedia)", Toast.LENGTH_SHORT).show();
                 }
             }
 

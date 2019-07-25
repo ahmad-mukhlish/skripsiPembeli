@@ -10,7 +10,7 @@ public class Helper {
             DecimalFormatSymbols symbol = new DecimalFormatSymbols();
             symbol.setGroupingSeparator('.');
 
-            DecimalFormat format = new DecimalFormat(" Rp ###,###");
+            DecimalFormat format = new DecimalFormat("Rp ###,###");
             format.setDecimalFormatSymbols(symbol);
 
             return format.format(Double.parseDouble(input));

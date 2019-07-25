@@ -3,6 +3,7 @@ package com.programmerbaper.skripsipembeli.retrofit.api;
 import com.programmerbaper.skripsipembeli.model.Makanan;
 import com.programmerbaper.skripsipembeli.model.Pedagang;
 import com.programmerbaper.skripsipembeli.model.Pembeli;
+import com.programmerbaper.skripsipembeli.model.Transaksi;
 
 import org.json.JSONArray;
 
@@ -53,5 +54,11 @@ public interface APIInterface {
     Call<String> notifPesan(@Field("area") String area,
                             @Field("nilai") String nilai,
                             @Field("id_pedagang") int idPedagang);
+
+    @GET("transaksiByIDGet/{id_transaksi}")
+    Call<Transaksi> transaksiByIDGet(@Path("id_transaksi") int idTransaksi);
+
+    @GET("detailTransaksiGet/{id_transaksi}")
+    Call<ArrayList<Makanan>> detailTransaksiGet(@Path("id_transaksi") int idTransaksi);
 
 }
