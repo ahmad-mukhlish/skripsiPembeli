@@ -56,8 +56,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.programmerbaper.skripsipembeli.misc.Config.DATA_TRANSAKSI;
 import static com.programmerbaper.skripsipembeli.misc.Config.ID_PEMBELI;
 import static com.programmerbaper.skripsipembeli.misc.Config.MY_PREFERENCES;
+import static com.programmerbaper.skripsipembeli.misc.Config.PASSWORD;
+import static com.programmerbaper.skripsipembeli.misc.Config.TRANSAKSI;
 
 public class ConfirmActivity extends AppCompatActivity {
 
@@ -69,6 +72,8 @@ public class ConfirmActivity extends AppCompatActivity {
     private double longitude;
     private int idTransaksi;
     private ProgressDialog dialog;
+    private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
 
     public static boolean permission = false;
 
@@ -355,7 +360,7 @@ public class ConfirmActivity extends AppCompatActivity {
     }
 
 
-    private void getTransaksi(int idTransaksi) {
+    private void getTransaksi(final int idTransaksi) {
 
         dialog.show();
         APIInterface apiInterface = APIClient.getApiClient().create(APIInterface.class);
@@ -366,8 +371,14 @@ public class ConfirmActivity extends AppCompatActivity {
             public void onResponse(Call<Transaksi> call, Response<Transaksi> response) {
                 dialog.dismiss();
                 Transaksi transaksi = response.body();
+
+                pref = getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE);
+                editor = pref.edit();
+                editor.putString(TRANSAKSI, idTransaksi+"");
+                editor.apply();
+
                 Intent intent = new Intent(ConfirmActivity.this, DetailTransaksiActivity.class);
-                intent.putExtra("DATA_TRANSAKSI",transaksi);
+                intent.putExtra(DATA_TRANSAKSI,transaksi);
                 startActivity(intent);
             }
 

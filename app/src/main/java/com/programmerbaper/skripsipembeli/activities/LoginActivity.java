@@ -24,6 +24,7 @@ import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.programmerbaper.skripsipembeli.R;
 import com.programmerbaper.skripsipembeli.model.Pembeli;
+import com.programmerbaper.skripsipembeli.model.Transaksi;
 import com.programmerbaper.skripsipembeli.retrofit.api.APIClient;
 import com.programmerbaper.skripsipembeli.retrofit.api.APIInterface;
 
@@ -31,10 +32,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.programmerbaper.skripsipembeli.misc.Config.DATA_TRANSAKSI;
 import static com.programmerbaper.skripsipembeli.misc.Config.FCM_TOKEN;
 import static com.programmerbaper.skripsipembeli.misc.Config.ID_PEMBELI;
 import static com.programmerbaper.skripsipembeli.misc.Config.MY_PREFERENCES;
 import static com.programmerbaper.skripsipembeli.misc.Config.PASSWORD;
+import static com.programmerbaper.skripsipembeli.misc.Config.TRANSAKSI;
 import static com.programmerbaper.skripsipembeli.misc.Config.USERNAME;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
@@ -57,7 +60,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         bind();
         initProgressDialog();
-        initPreferences();
 
     }
 
@@ -99,14 +101,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         dialog.setCancelable(false);
     }
 
-    private void initPreferences() {
-        pref = getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE);
-        String id = pref.getString(ID_PEMBELI, "");
-        if (!id.equals("")) {
-            Intent intent = new Intent(LoginActivity.this, PilihPedagangActivity.class);
-            startActivity(intent);
-        }
-    }
+
 
 
     private void writePembeliToFirebase(int idPembeli, String username) {
@@ -142,8 +137,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                     writePembeliToFirebase(pembeli.getIdPembeli(), pembeli.getUsername());
 
-                    Intent intent = new Intent(LoginActivity.this, PilihPedagangActivity.class);
-                    startActivity(intent);
+                    String transaksi = pref.getString(TRANSAKSI, "");
+
+                    if (!transaksi.equals("")) {
+                        getTransaksi(Integer.parseInt(transaksi));
+                    } else {
+                        Intent intent = new Intent(LoginActivity.this, PilihPedagangActivity.class);
+                        startActivity(intent);
+                    }
                     finish();
                 } else {
                     dialog.dismiss();
@@ -174,7 +175,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
 
-                    if(response.body().isEmpty()) {
+                    if (response.body().isEmpty()) {
 
                         getTokenFromFcm();
 
@@ -201,7 +202,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         }
 
-        FirebaseMessaging.getInstance().subscribeToTopic("test") ;
+        FirebaseMessaging.getInstance().subscribeToTopic("test");
     }
 
     private void getTokenFromFcm() {
@@ -235,5 +236,29 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
+
+    private void getTransaksi(final int idTransaksi) {
+
+        APIInterface apiInterface = APIClient.getApiClient().create(APIInterface.class);
+
+        Call<Transaksi> call = apiInterface.transaksiByIDGet(idTransaksi);
+        call.enqueue(new Callback<Transaksi>() {
+            @Override
+            public void onResponse(Call<Transaksi> call, Response<Transaksi> response) {
+                Transaksi transaksi = response.body();
+                Intent intent = new Intent(LoginActivity.this, DetailTransaksiActivity.class);
+                intent.putExtra(DATA_TRANSAKSI, transaksi);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onFailure(Call<Transaksi> call, Throwable t) {
+                t.printStackTrace();
+                Toast.makeText(LoginActivity.this, "Terjadi Kesalahan Tidak Terduga", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+    }
 
 }

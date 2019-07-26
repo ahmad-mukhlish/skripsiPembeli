@@ -46,6 +46,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.programmerbaper.skripsipembeli.misc.Config.DATA_TRANSAKSI;
+
 public class DetailTransaksiActivity extends AppCompatActivity implements OnMapReadyCallback, TaskLoadedCallback {
 
     private Transaksi transaksi;
@@ -75,7 +77,7 @@ public class DetailTransaksiActivity extends AppCompatActivity implements OnMapR
         recyclerView.setLayoutManager(layoutManager);
 
         Bundle bundle = getIntent().getExtras();
-        transaksi = bundle.getParcelable("DATA_TRANSAKSI");
+        transaksi = bundle.getParcelable(DATA_TRANSAKSI);
 
         //set list of pesanan to be scrollable
         ((SlidingUpPanelLayout) findViewById(R.id.sliding_layout))
