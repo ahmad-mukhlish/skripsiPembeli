@@ -25,6 +25,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.programmerbaper.skripsipembeli.misc.Config.FCM_TOKEN;
 import static com.programmerbaper.skripsipembeli.misc.Config.ID_PEMBELI;
 import static com.programmerbaper.skripsipembeli.misc.Config.MY_PREFERENCES;
 import static com.programmerbaper.skripsipembeli.misc.Config.PASSWORD;
@@ -120,6 +121,8 @@ public class PilihPedagangActivity extends AppCompatActivity {
         editor.putString(ID_PEMBELI, "");
         editor.putString(USERNAME, "");
         editor.putString(PASSWORD, "");
+        editor.putString(FCM_TOKEN, "");
+
 
         editor.commit();
 

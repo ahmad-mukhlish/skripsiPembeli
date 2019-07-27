@@ -127,6 +127,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                 if (!pembeli.getNama().equals("Password Salah")) {
                     dialog.dismiss();
+                    pref = getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE);
                     editor = pref.edit();
                     editor.putString(ID_PEMBELI, String.valueOf(pembeli.getIdPembeli()));
                     editor.putString(USERNAME, String.valueOf(pembeli.getUsername()));

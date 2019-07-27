@@ -59,7 +59,6 @@ import retrofit2.Response;
 import static com.programmerbaper.skripsipembeli.misc.Config.DATA_TRANSAKSI;
 import static com.programmerbaper.skripsipembeli.misc.Config.ID_PEMBELI;
 import static com.programmerbaper.skripsipembeli.misc.Config.MY_PREFERENCES;
-import static com.programmerbaper.skripsipembeli.misc.Config.PASSWORD;
 import static com.programmerbaper.skripsipembeli.misc.Config.TRANSAKSI;
 
 public class ConfirmActivity extends AppCompatActivity {
@@ -437,7 +436,7 @@ public class ConfirmActivity extends AppCompatActivity {
     private void notifPesanan() {
 
         APIInterface apiInterface = APIClient.getApiClient().create(APIInterface.class);
-        Call<String> call = apiInterface.notifPesan(getArea(), hitungSub(pesanan) + "", idPedagangTerpilih);
+        Call<String> call = apiInterface.notifPesanPost(getArea(), hitungSub(pesanan) + "", idPedagangTerpilih);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {

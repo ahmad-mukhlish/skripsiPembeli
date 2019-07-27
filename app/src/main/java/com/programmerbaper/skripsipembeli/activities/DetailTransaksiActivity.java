@@ -1,5 +1,6 @@
 package com.programmerbaper.skripsipembeli.activities;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,7 +12,12 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -31,6 +37,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.programmerbaper.skripsipembeli.R;
 import com.programmerbaper.skripsipembeli.adapter.PesananAdapter;
+import com.programmerbaper.skripsipembeli.misc.CurrentActivityContext;
 import com.programmerbaper.skripsipembeli.misc.Helper;
 import com.programmerbaper.skripsipembeli.misc.directionhelpers.FetchURL;
 import com.programmerbaper.skripsipembeli.misc.directionhelpers.TaskLoadedCallback;
@@ -96,6 +103,49 @@ public class DetailTransaksiActivity extends AppCompatActivity implements OnMapR
         dialog.setTitle("Daftar Detail Pesanan");
         dialog.setMessage("Sedang Memuat..");
         dialog.setCancelable(false);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_detail_transaksi, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.note) {
+            dialogueKeterangan();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void dialogueKeterangan() {
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View rootDialog = LayoutInflater.from(this).inflate(R.layout.dialogue_read_keterangan, null);
+        TextView keterangan = rootDialog.findViewById(R.id.keterangan);
+
+        if (transaksi.getCatatan() == null) {
+            keterangan.setText("Catatan Kosong");
+        } else {
+            keterangan.setText(transaksi.getCatatan());
+        }
+
+        builder.setView(rootDialog);
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+
+        TextView ok = rootDialog.findViewById(R.id.konfirmasi_catatan);
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+
     }
 
 
@@ -164,8 +214,8 @@ public class DetailTransaksiActivity extends AppCompatActivity implements OnMapR
                 double latPedagang = (Double) dataSnapshot.child("latitude").getValue();
                 double longPedagang = (Double) dataSnapshot.child("longitude").getValue();
 
-                Log.v("cikk",latPedagang+"");
-                Log.v("cikk",longPedagang+"");
+                Log.v("cikk", latPedagang + "");
+                Log.v("cikk", longPedagang + "");
 
 
                 posPedagang = new LatLng(latPedagang, longPedagang);
@@ -235,4 +285,15 @@ public class DetailTransaksiActivity extends AppCompatActivity implements OnMapR
         return sub;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CurrentActivityContext.setActualContext(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CurrentActivityContext.setActualContext(null);
+    }
 }

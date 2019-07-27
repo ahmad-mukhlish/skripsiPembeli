@@ -50,10 +50,10 @@ public interface APIInterface {
                                    @Field("fcm_token") String fcmToken) ;
 
     @FormUrlEncoded
-    @POST("notifPesan")
-    Call<String> notifPesan(@Field("area") String area,
-                            @Field("nilai") String nilai,
-                            @Field("id_pedagang") int idPedagang);
+    @POST("notifPesanPost")
+    Call<String> notifPesanPost(@Field("area") String area,
+                                @Field("nilai") String nilai,
+                                @Field("id_pedagang") int idPedagang);
 
     @GET("transaksiByIDGet/{id_transaksi}")
     Call<Transaksi> transaksiByIDGet(@Path("id_transaksi") int idTransaksi);

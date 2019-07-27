@@ -29,6 +29,9 @@ public class Transaksi implements Parcelable {
     @SerializedName("no_telp")
     @Expose
     private String noTelp;
+    @SerializedName("catatan")
+    @Expose
+    private String catatan;
 
     public Integer getIdTransaksi() {
         return idTransaksi;
@@ -86,6 +89,14 @@ public class Transaksi implements Parcelable {
         this.noTelp = noTelp;
     }
 
+    public String getCatatan() {
+        return catatan;
+    }
+
+    public void setCatatan(String catatan) {
+        this.catatan = catatan;
+    }
+
 
     protected Transaksi(Parcel in) {
         idTransaksi = in.readByte() == 0x00 ? null : in.readInt();
@@ -95,6 +106,7 @@ public class Transaksi implements Parcelable {
         idPedagang = in.readByte() == 0x00 ? null : in.readInt();
         nama = in.readString();
         noTelp = in.readString();
+        catatan = in.readString();
     }
 
     @Override
@@ -136,6 +148,7 @@ public class Transaksi implements Parcelable {
         }
         dest.writeString(nama);
         dest.writeString(noTelp);
+        dest.writeString(catatan);
     }
 
     @SuppressWarnings("unused")
