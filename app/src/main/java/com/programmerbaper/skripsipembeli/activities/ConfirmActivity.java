@@ -77,7 +77,6 @@ public class ConfirmActivity extends AppCompatActivity {
     public static boolean permission = false;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -265,6 +264,8 @@ public class ConfirmActivity extends AppCompatActivity {
 
     private void initPermission() {
 
+
+        Log.v("cikann", "init");
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -296,7 +297,6 @@ public class ConfirmActivity extends AppCompatActivity {
             @Override
             public void onLocationChanged(Location location) {
 
-
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
 
@@ -310,6 +310,7 @@ public class ConfirmActivity extends AppCompatActivity {
             @Override
             public void onProviderEnabled(String s) {
 
+
             }
 
             @Override
@@ -319,10 +320,19 @@ public class ConfirmActivity extends AppCompatActivity {
         };
 
 
+        getLastLocation(mLocationManager);
+
+
         mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1, 1, mLocationListener);
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, mLocationListener);
 
 
+    }
+
+    private void getLastLocation(LocationManager locationManager) {
+        @SuppressLint("MissingPermission") Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
     }
 
     private String getAlamat() {
@@ -364,7 +374,7 @@ public class ConfirmActivity extends AppCompatActivity {
         dialog.show();
         APIInterface apiInterface = APIClient.getApiClient().create(APIInterface.class);
 
-        Call<Transaksi> call = apiInterface.transaksiByIDGet(idTransaksi) ;
+        Call<Transaksi> call = apiInterface.transaksiByIDGet(idTransaksi);
         call.enqueue(new Callback<Transaksi>() {
             @Override
             public void onResponse(Call<Transaksi> call, Response<Transaksi> response) {
@@ -373,11 +383,11 @@ public class ConfirmActivity extends AppCompatActivity {
 
                 pref = getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE);
                 editor = pref.edit();
-                editor.putString(TRANSAKSI, idTransaksi+"");
+                editor.putString(TRANSAKSI, idTransaksi + "");
                 editor.apply();
 
                 Intent intent = new Intent(ConfirmActivity.this, DetailTransaksiActivity.class);
-                intent.putExtra(DATA_TRANSAKSI,transaksi);
+                intent.putExtra(DATA_TRANSAKSI, transaksi);
                 startActivity(intent);
             }
 
@@ -436,7 +446,7 @@ public class ConfirmActivity extends AppCompatActivity {
     private void notifPesanan() {
 
         APIInterface apiInterface = APIClient.getApiClient().create(APIInterface.class);
-        Call<String> call = apiInterface.notifPesanPost(getArea(), hitungSub(pesanan) + "", idPedagangTerpilih);
+        Call<String> call = apiInterface.notifPesanPost(getArea(), hitungSub(pesanan) + "", idPedagangTerpilih, idTransaksi);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {

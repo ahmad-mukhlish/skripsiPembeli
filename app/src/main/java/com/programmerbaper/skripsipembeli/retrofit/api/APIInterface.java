@@ -53,7 +53,8 @@ public interface APIInterface {
     @POST("notifPesanPost")
     Call<String> notifPesanPost(@Field("area") String area,
                                 @Field("nilai") String nilai,
-                                @Field("id_pedagang") int idPedagang);
+                                @Field("id_pedagang") int idPedagang,
+                                @Field("id_transaksi") int idTransaksi);
 
     @GET("transaksiByIDGet/{id_transaksi}")
     Call<Transaksi> transaksiByIDGet(@Path("id_transaksi") int idTransaksi);
