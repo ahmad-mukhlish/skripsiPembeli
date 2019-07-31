@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.programmerbaper.skripsipembeli.R;
 import com.programmerbaper.skripsipembeli.adapter.MakananAdapter;
+import com.programmerbaper.skripsipembeli.misc.CurrentActivityContext;
 import com.programmerbaper.skripsipembeli.misc.Helper;
 import com.programmerbaper.skripsipembeli.model.Makanan;
 import com.programmerbaper.skripsipembeli.model.Pedagang;
@@ -104,6 +105,18 @@ public class PilihMakananActivity extends AppCompatActivity {
 
         }
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CurrentActivityContext.setActualContext(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CurrentActivityContext.setActualContext(null);
     }
 
 

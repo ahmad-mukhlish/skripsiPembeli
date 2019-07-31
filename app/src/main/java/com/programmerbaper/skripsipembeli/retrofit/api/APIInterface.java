@@ -62,4 +62,36 @@ public interface APIInterface {
     @GET("detailTransaksiGet/{id_transaksi}")
     Call<ArrayList<Makanan>> detailTransaksiGet(@Path("id_transaksi") int idTransaksi);
 
+    @FormUrlEncoded
+    @POST("ratingPedagangPost")
+    Call<String> ratingPedagangPost(@Field("id_transaksi") int idTransaksi,
+                                   @Field("rating") int rating) ;
+
+    @GET("pedagangByIDGet/{id_pedagang}")
+    Call<Pedagang> pedagangByIDGet(@Path("id_pedagang") int idPedagang);
+
+    @FormUrlEncoded
+    @POST("subscribePost")
+    Call<String> subscribePost(@Field("id_pembeli") int idPembeli,
+                                    @Field("id_pedagang") int idPedagang) ;
+
+    @FormUrlEncoded
+    @POST("notifSubscribePost")
+    Call<String> notifSubscribePost(@Field("id_pembeli") int idPembeli,
+                               @Field("id_pedagang") int idPedagang) ;
+
+
+    @GET("cekSubscribeGet/{id_pedagang}/{id_pembeli}")
+    Call<String> cekSubscribeGet(@Path("id_pedagang") int idPedagang,
+                                  @Path("id_pembeli") int idPembeli);
+
+    @FormUrlEncoded
+    @POST("deleteTransaksiPost")
+    Call<String> deleteTransaksiPost(@Field("id_transaksi") int idTransaksi) ;
+
+    @FormUrlEncoded
+    @POST("notifDeleteTransaksiPost")
+    Call<String> notifDeleteTransaksiPost(@Field("id_pembeli") int idPembeli,
+                                    @Field("id_pedagang") int idPedagang) ;
+
 }

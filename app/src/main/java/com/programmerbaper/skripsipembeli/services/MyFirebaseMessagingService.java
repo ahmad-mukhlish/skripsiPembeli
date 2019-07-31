@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
@@ -23,13 +24,19 @@ import com.programmerbaper.skripsipembeli.R;
 import com.programmerbaper.skripsipembeli.activities.FeedBackActivity;
 import com.programmerbaper.skripsipembeli.misc.CurrentActivityContext;
 import com.programmerbaper.skripsipembeli.misc.NotificationID;
+import com.programmerbaper.skripsipembeli.model.Pedagang;
+import com.programmerbaper.skripsipembeli.model.Transaksi;
+import com.programmerbaper.skripsipembeli.retrofit.api.APIClient;
+import com.programmerbaper.skripsipembeli.retrofit.api.APIInterface;
 
-import static com.programmerbaper.skripsipembeli.misc.Config.ID_PEMBELI;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 import static com.programmerbaper.skripsipembeli.misc.Config.ID_TRANSAKSI;
 import static com.programmerbaper.skripsipembeli.misc.Config.MY_PREFERENCES;
-import static com.programmerbaper.skripsipembeli.misc.Config.PASSWORD;
+import static com.programmerbaper.skripsipembeli.misc.Config.PEDAGANG;
 import static com.programmerbaper.skripsipembeli.misc.Config.TRANSAKSI;
-import static com.programmerbaper.skripsipembeli.misc.Config.USERNAME;
 
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -55,7 +62,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setLargeIcon(icon)
                 .setContentText(remoteMessage.getNotification().getBody())
                 .setContentTitle(remoteMessage.getNotification().getTitle())
-                .setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_LIGHTS| Notification.DEFAULT_VIBRATE)
+                .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
@@ -66,13 +73,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Handler h = new Handler(Looper.getMainLooper());
             h.post(new Runnable() {
                 public void run() {
-                    Toast.makeText(CurrentActivityContext.getActualContext(),"Pedagang Telah Mendekat",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CurrentActivityContext.getActualContext(), "Pedagang Telah Mendekat", Toast.LENGTH_SHORT).show();
                 }
             });
 
-        }
-
-        else if (remoteMessage.getData().get("jenis").equals("selesai")) {
+        } else if (remoteMessage.getData().get("jenis").equals("selesai")) {
 
 
             Handler h = new Handler(Looper.getMainLooper());
@@ -85,10 +90,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     editor.putString(TRANSAKSI, "");
                     editor.commit();
 
+                    getPedagangById(remoteMessage);
 
-                    Intent intent = new Intent(CurrentActivityContext.getActualContext(), FeedBackActivity.class);
-                    intent.putExtra(ID_TRANSAKSI, remoteMessage.getData().get("id_transaksi"));
-                    CurrentActivityContext.getActualContext().startActivity(intent);
+                    Log.v("Cikan",remoteMessage.getData().get("id_transaksi")) ;
 
                 }
             });
@@ -113,6 +117,32 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
+    }
+
+    private void getPedagangById(final RemoteMessage remoteMessage) {
+
+        APIInterface apiInterface = APIClient.getApiClient().create(APIInterface.class);
+        Call<Pedagang> call = apiInterface.pedagangByIDGet(Integer.parseInt(remoteMessage.getData().get("id_pedagang")));
+
+        call.enqueue(new Callback<Pedagang>() {
+            @Override
+            public void onResponse(Call<Pedagang> call, Response<Pedagang> response) {
+
+                Intent intent = new Intent(CurrentActivityContext.getActualContext(), FeedBackActivity.class);
+                intent.putExtra(ID_TRANSAKSI, remoteMessage.getData().get("id_transaksi"));
+                intent.putExtra(PEDAGANG, response.body());
+                CurrentActivityContext.getActualContext().startActivity(intent);
+
+            }
+
+            @Override
+            public void onFailure(Call<Pedagang> call, Throwable t) {
+
+            }
+        });
+
+
+
     }
 
 

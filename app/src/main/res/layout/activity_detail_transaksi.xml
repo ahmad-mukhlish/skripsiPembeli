@@ -82,7 +82,7 @@
             android:id="@+id/done"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
+            android:background="#f44336"
             android:padding="20dp"
             android:text="Transaksi Selesai"
             android:textColor="#FFFFFF"

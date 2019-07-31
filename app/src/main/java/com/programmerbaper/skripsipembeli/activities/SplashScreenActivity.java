@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.widget.Toast;
 
 import com.programmerbaper.skripsipembeli.R;
+import com.programmerbaper.skripsipembeli.misc.CurrentActivityContext;
 import com.programmerbaper.skripsipembeli.model.Transaksi;
 import com.programmerbaper.skripsipembeli.retrofit.api.APIClient;
 import com.programmerbaper.skripsipembeli.retrofit.api.APIInterface;
@@ -99,6 +100,18 @@ public class SplashScreenActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CurrentActivityContext.setActualContext(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CurrentActivityContext.setActualContext(null);
     }
 
 

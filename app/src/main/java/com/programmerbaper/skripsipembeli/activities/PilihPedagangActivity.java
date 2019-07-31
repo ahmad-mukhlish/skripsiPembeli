@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.programmerbaper.skripsipembeli.R;
 import com.programmerbaper.skripsipembeli.adapter.PedagangAdapter;
+import com.programmerbaper.skripsipembeli.misc.CurrentActivityContext;
 import com.programmerbaper.skripsipembeli.model.Pedagang;
 import com.programmerbaper.skripsipembeli.retrofit.api.APIClient;
 import com.programmerbaper.skripsipembeli.retrofit.api.APIInterface;
@@ -130,6 +131,18 @@ public class PilihPedagangActivity extends AppCompatActivity {
         startActivity(intent);
 
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CurrentActivityContext.setActualContext(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CurrentActivityContext.setActualContext(null);
     }
 
 }

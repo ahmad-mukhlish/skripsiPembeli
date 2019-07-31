@@ -17,12 +17,13 @@
         android:theme="@style/RatingBar" />
 
     <TextView
+        android:id="@+id/label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/ratingnya"
         android:layout_marginBottom="10dp"
         android:gravity="center"
-        android:text="Silahkan masukkan rating Anda"
+        android:text=""
         android:textColor="@color/colorPrimaryDark"
         android:textStyle="bold"
         android:textSize="17sp" />
