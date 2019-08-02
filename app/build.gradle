@@ -18,6 +18,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -54,6 +58,10 @@ dependencies {
 
     //sliding up panel
     implementation 'com.sothree.slidinguppanel:library:3.4.0'
+
+    //datepicker
+    implementation 'com.wdullaer:materialdatetimepicker:4.2.1'
+
 
     implementation 'androidx.multidex:multidex:2.0.1'
 

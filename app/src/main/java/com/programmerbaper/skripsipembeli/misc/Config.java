@@ -12,6 +12,7 @@ public class Config {
     public static final String USERNAME = "USERNAME";
     public static final String PASSWORD = "PASSWORD";
     public static final String PEDAGANG = "PEDAGANG";
+    public static final String PREORDER = "PREORDER";
 
 
     public static final String BASE_URL_OWM = "http://api.openweathermap.org/data/2.5/";

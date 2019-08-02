@@ -1,6 +1,8 @@
 package com.programmerbaper.skripsipembeli.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +28,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.programmerbaper.skripsipembeli.misc.Config.DATA_PEDAGANG_TERPILIH;
+import static com.programmerbaper.skripsipembeli.misc.Config.MY_PREFERENCES;
+import static com.programmerbaper.skripsipembeli.misc.Config.PREORDER;
 
 public class PilihMakananActivity extends AppCompatActivity {
 
@@ -57,7 +61,14 @@ public class PilihMakananActivity extends AppCompatActivity {
 
 
         getMakanan();
-        setTitle("Pilihan Dagangan");
+
+        SharedPreferences pref = getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE);
+        String preOrder = pref.getString(PREORDER, "");
+        if (preOrder.equals(PREORDER)) {
+            setTitle("Pilihan Dagangan Pre Order");
+        } else {
+            setTitle("Pilihan Dagangan");
+        }
 
     }
 

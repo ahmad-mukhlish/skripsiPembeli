@@ -62,6 +62,7 @@ import static com.programmerbaper.skripsipembeli.misc.Config.BASE_URL;
 import static com.programmerbaper.skripsipembeli.misc.Config.DATA_TRANSAKSI;
 import static com.programmerbaper.skripsipembeli.misc.Config.ID_PEMBELI;
 import static com.programmerbaper.skripsipembeli.misc.Config.MY_PREFERENCES;
+import static com.programmerbaper.skripsipembeli.misc.Config.TRANSAKSI;
 
 public class DetailTransaksiActivity extends AppCompatActivity implements OnMapReadyCallback, TaskLoadedCallback {
 
@@ -338,6 +339,14 @@ public class DetailTransaksiActivity extends AppCompatActivity implements OnMapR
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                //flush shared preferences
+                SharedPreferences pref = getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString(TRANSAKSI, "");
+                editor.commit();
+
+
                 dialog.dismiss();
                 deleteTransaksi();
 

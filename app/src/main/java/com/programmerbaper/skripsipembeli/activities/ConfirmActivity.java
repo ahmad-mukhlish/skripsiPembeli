@@ -39,13 +39,16 @@ import com.programmerbaper.skripsipembeli.model.Makanan;
 import com.programmerbaper.skripsipembeli.model.Transaksi;
 import com.programmerbaper.skripsipembeli.retrofit.api.APIClient;
 import com.programmerbaper.skripsipembeli.retrofit.api.APIInterface;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -58,11 +61,15 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.programmerbaper.skripsipembeli.misc.Config.DATA_TRANSAKSI;
+import static com.programmerbaper.skripsipembeli.misc.Config.FCM_TOKEN;
 import static com.programmerbaper.skripsipembeli.misc.Config.ID_PEMBELI;
 import static com.programmerbaper.skripsipembeli.misc.Config.MY_PREFERENCES;
+import static com.programmerbaper.skripsipembeli.misc.Config.PASSWORD;
+import static com.programmerbaper.skripsipembeli.misc.Config.PREORDER;
 import static com.programmerbaper.skripsipembeli.misc.Config.TRANSAKSI;
+import static com.programmerbaper.skripsipembeli.misc.Config.USERNAME;
 
-public class ConfirmActivity extends AppCompatActivity {
+public class ConfirmActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
     private String catatan = "";
     private String alamat = "";
@@ -134,7 +141,14 @@ public class ConfirmActivity extends AppCompatActivity {
         });
 
         initProgressDialog();
-        setTitle("Konfirmasi Pesanan");
+        SharedPreferences pref = getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE);
+        String preOrder = pref.getString(PREORDER, "");
+        if (preOrder.equals(PREORDER)) {
+            setTitle("Konfirmasi Pesanan Pre Order");
+        } else {
+            setTitle("Konfirmasi Pesanan");
+        }
+
     }
 
 
@@ -234,7 +248,15 @@ public class ConfirmActivity extends AppCompatActivity {
 
                 dialog.dismiss();
                 ConfirmActivity.this.alamat = alamat.getText().toString();
-                pesanPedagangKelilingOnline();
+
+                SharedPreferences pref = getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE);
+                String preOrder = pref.getString(PREORDER, "");
+                if (preOrder.equals(PREORDER)) {
+                    showDatePicker();
+                } else {
+                    pesanPedagangKelilingOnline(getTodayTanggal(), 0);
+                }
+
 
             }
         });
@@ -360,7 +382,7 @@ public class ConfirmActivity extends AppCompatActivity {
 
     }
 
-    private String getTanggal() {
+    private String getTodayTanggal() {
 
         Date c = Calendar.getInstance().getTime();
 
@@ -403,7 +425,7 @@ public class ConfirmActivity extends AppCompatActivity {
 
     }
 
-    private void pesanPedagangKelilingOnline() {
+    private void pesanPedagangKelilingOnline(String tanggal, int preOrderStatus) {
 
 
         SharedPreferences pref = getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE);
@@ -411,7 +433,7 @@ public class ConfirmActivity extends AppCompatActivity {
 
         APIInterface apiInterface = APIClient.getApiClient().create(APIInterface.class);
         Call<String> call = apiInterface.pesanPedagangBerkelilingPost
-                (Integer.parseInt(idPembeli), idPedagangTerpilih, catatan, alamat, getArea(), latitude, longitude, getTanggal(), parsePesananToJSONArray(pesanan));
+                (Integer.parseInt(idPembeli), idPedagangTerpilih, catatan, alamat, getArea(), latitude, longitude, tanggal, parsePesananToJSONArray(pesanan), preOrderStatus);
 
         call.enqueue(new Callback<String>() {
             @Override
@@ -419,7 +441,21 @@ public class ConfirmActivity extends AppCompatActivity {
 
                 if (response.body() != null) {
                     idTransaksi = Integer.parseInt(response.body());
-                    notifPesanan();
+
+                    if (preOrderStatus == 0) {
+                        notifPesanan();
+                    } else {
+                        Toast.makeText(ConfirmActivity.this, "Pre Order Telah Dicatat", Toast.LENGTH_SHORT).show();
+
+                        //flush shared preferences
+                        SharedPreferences pref = getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = pref.edit();
+                        editor.putString(PREORDER, "");
+                        editor.commit();
+
+                        //intent to main menu
+                        ConfirmActivity.this.startActivity(new Intent(ConfirmActivity.this, PilihPedagangActivity.class));
+                    }
 
 
                 } else {
@@ -479,4 +515,65 @@ public class ConfirmActivity extends AppCompatActivity {
         CurrentActivityContext.setActualContext(null);
     }
 
+    private void showDatePicker() {
+
+        Calendar now = Calendar.getInstance();
+
+        com.wdullaer.materialdatetimepicker.date.DatePickerDialog dpd = com.wdullaer.materialdatetimepicker.date.DatePickerDialog.newInstance(
+                ConfirmActivity.this,
+                now.get(Calendar.YEAR), // Initial year selection
+                now.get(Calendar.MONTH), // Initial month selection
+                now.get(Calendar.DAY_OF_MONTH) + 1 // Inital day selection
+        );
+        dpd.show(getSupportFragmentManager(), "Datepickerdialog");
+
+    }
+
+    @Override
+    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+
+        SimpleDateFormat df = new SimpleDateFormat("dd MMMM yyyy", new Locale("ID"));
+        SimpleDateFormat sql = new SimpleDateFormat("yyyy-MM-dd");
+        String month;
+
+        monthOfYear++;
+        if (monthOfYear < 10)
+            month = "0" + monthOfYear;
+        else
+            month = "" + monthOfYear;
+
+        SimpleDateFormat sqlformat = new SimpleDateFormat("yyyyMMdd", new Locale("EN"));
+        String tanggal = year + month + dayOfMonth;
+        try {
+            String tanggalDf = df.format(sqlformat.parse(tanggal));
+            String tanggalSql = sql.format(df.parse(tanggalDf));
+            Log.v("cikandesu", tanggalSql);
+
+            Date pickan = sql.parse(tanggalSql);
+            Date today = Calendar.getInstance().getTime();
+
+
+            if (pickan.before(today) || pickan.equals(today)) {
+
+
+                Log.v("cikandes", sql.format(today));
+                Log.v("cikandes", sql.format(pickan));
+
+
+                Toast.makeText(ConfirmActivity.this, "Tanggal pre order harus besok atau setelahnya", Toast.LENGTH_SHORT).show();
+                showDatePicker();
+
+            } else {
+
+                pesanPedagangKelilingOnline(tanggalSql, 1);
+
+
+            }
+
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+    }
 }

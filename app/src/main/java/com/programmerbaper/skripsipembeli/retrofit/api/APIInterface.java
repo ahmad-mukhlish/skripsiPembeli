@@ -39,7 +39,8 @@ public interface APIInterface {
                                               @Field("latitude") double latitude,
                                               @Field("longitude") double longitude,
                                               @Field("tanggal") String tanggal,
-                                              @Field("listPesanan") JSONArray listPesanan);
+                                              @Field("listPesanan") JSONArray listPesanan,
+                                              @Field("pre_order_status") int preOrderStatus);
 
     @GET("retrieveTokenByIDGet/{id_pembeli}")
     Call<String> retrieveTokenByIDGet(@Path("id_pembeli") int idPembeli);

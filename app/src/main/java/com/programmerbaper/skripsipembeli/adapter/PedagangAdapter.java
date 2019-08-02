@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,6 +24,9 @@ import java.util.List;
 
 import static com.programmerbaper.skripsipembeli.misc.Config.BASE_URL;
 import static com.programmerbaper.skripsipembeli.misc.Config.DATA_PEDAGANG_TERPILIH;
+import static com.programmerbaper.skripsipembeli.misc.Config.ID_PEMBELI;
+import static com.programmerbaper.skripsipembeli.misc.Config.MY_PREFERENCES;
+import static com.programmerbaper.skripsipembeli.misc.Config.PREORDER;
 
 public class PedagangAdapter extends RecyclerView.Adapter<PedagangAdapter.PedagangViewHolder> {
 
@@ -73,36 +78,35 @@ public class PedagangAdapter extends RecyclerView.Adapter<PedagangAdapter.Pedaga
         pedagangViewHolder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                //TODO add detail pedagang here
+
+            }
+        });
+
+        SharedPreferences pref = context.getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE);
+        String preOrder = pref.getString(PREORDER, "");
+        if (preOrder.equals(PREORDER)) {
+
+            pedagangViewHolder.tombol.setText("PRE ORDER");
+
+        } else {
+
+            pedagangViewHolder.tombol.setText("PESAN");
+
+
+        }
+
+        pedagangViewHolder.tombol.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
                 Intent intent = new Intent(context, PilihMakananActivity.class);
                 intent.putExtra(DATA_PEDAGANG_TERPILIH, pedagang);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
         });
-
-//        ValueEventListener postListener = new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                // Get Post object and use the values to update the UI
-//                Log.v("cik",dataSnapshot.toString());
-//                // ...
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                // Getting Post failed, log a message
-//                Log.w("cik", "loadPost:onCancelled", databaseError.toException());
-//                // ...
-//            }
-//        };
-
-
-//        DatabaseReference root = FirebaseDatabase.getInstance().getReference()
-//                .child("pemilik");
-
-//        root.addValueEventListener(postListener) ;
-
-
 
 
     }
@@ -115,9 +119,10 @@ public class PedagangAdapter extends RecyclerView.Adapter<PedagangAdapter.Pedaga
 
     public class PedagangViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView image ;
+        private ImageView image;
         private TextView nama, jenis;
         private View view;
+        private Button tombol;
 
         public PedagangViewHolder(View itemView) {
             super(itemView);
@@ -126,7 +131,7 @@ public class PedagangAdapter extends RecyclerView.Adapter<PedagangAdapter.Pedaga
             image = itemView.findViewById(R.id.image);
             nama = itemView.findViewById(R.id.nama);
             jenis = itemView.findViewById(R.id.jenis);
-
+            tombol = itemView.findViewById(R.id.tombol);
 
         }
     }
