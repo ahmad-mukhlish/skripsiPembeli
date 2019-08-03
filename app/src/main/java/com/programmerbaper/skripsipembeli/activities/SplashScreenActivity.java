@@ -54,7 +54,6 @@ public class SplashScreenActivity extends AppCompatActivity {
                 public void run() {
                     Intent intent = new Intent(SplashScreenActivity.this, PilihPedagangActivity.class);
                     startActivity(intent);
-                    finish();
                 }
             }, 3000);
         } else {
@@ -86,7 +85,6 @@ public class SplashScreenActivity extends AppCompatActivity {
                         Intent intent = new Intent(SplashScreenActivity.this, DetailTransaksiActivity.class);
                         intent.putExtra(DATA_TRANSAKSI, transaksi);
                         startActivity(intent);
-                        finish();
                     }
                 }, 3000);
 

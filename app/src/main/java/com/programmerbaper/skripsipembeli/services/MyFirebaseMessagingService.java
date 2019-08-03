@@ -21,6 +21,8 @@ import androidx.core.app.NotificationManagerCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.programmerbaper.skripsipembeli.R;
+import com.programmerbaper.skripsipembeli.activities.ConfirmActivity;
+import com.programmerbaper.skripsipembeli.activities.DetailTransaksiActivity;
 import com.programmerbaper.skripsipembeli.activities.FeedBackActivity;
 import com.programmerbaper.skripsipembeli.misc.CurrentActivityContext;
 import com.programmerbaper.skripsipembeli.misc.NotificationID;
@@ -33,9 +35,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+import static com.programmerbaper.skripsipembeli.misc.Config.DATA_TRANSAKSI;
 import static com.programmerbaper.skripsipembeli.misc.Config.ID_TRANSAKSI;
 import static com.programmerbaper.skripsipembeli.misc.Config.MY_PREFERENCES;
 import static com.programmerbaper.skripsipembeli.misc.Config.PEDAGANG;
+import static com.programmerbaper.skripsipembeli.misc.Config.PREORDER;
 import static com.programmerbaper.skripsipembeli.misc.Config.TRANSAKSI;
 
 
@@ -68,14 +73,27 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.notify(NotificationID.getID(), builder.build());
 
+
+
         if (remoteMessage.getData().get("jenis").equals("dekat")) {
 
-            Handler h = new Handler(Looper.getMainLooper());
-            h.post(new Runnable() {
-                public void run() {
-                    Toast.makeText(CurrentActivityContext.getActualContext(), "Pedagang Telah Mendekat", Toast.LENGTH_SHORT).show();
-                }
-            });
+            if (remoteMessage.getData().get("pre_order_status").equals("0")
+                    && CurrentActivityContext.getActualContext() != null) {
+                Handler h = new Handler(Looper.getMainLooper());
+                h.post(new Runnable() {
+                    public void run() {
+                        Toast.makeText(CurrentActivityContext.getActualContext(), "Pedagang Telah Mendekat", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else if (CurrentActivityContext.getActualContext() != null) {
+                Handler h = new Handler(Looper.getMainLooper());
+                h.post(new Runnable() {
+                    public void run() {
+                        getTransaksi(Integer.parseInt(remoteMessage.getData().get("id_transaksi")));
+                    }
+                });
+            }
+
 
         } else if (remoteMessage.getData().get("jenis").equals("selesai")) {
 
@@ -92,7 +110,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
                     getPedagangById(remoteMessage);
 
-                    Log.v("Cikan",remoteMessage.getData().get("id_transaksi")) ;
 
                 }
             });
@@ -141,6 +158,34 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             }
         });
 
+
+    }
+
+    private void getTransaksi(final int idTransaksi) {
+
+        APIInterface apiInterface = APIClient.getApiClient().create(APIInterface.class);
+
+        Call<Transaksi> call = apiInterface.transaksiByIDGet(idTransaksi);
+        call.enqueue(new Callback<Transaksi>() {
+            @Override
+            public void onResponse(Call<Transaksi> call, Response<Transaksi> response) {
+                Transaksi transaksi = response.body();
+                SharedPreferences pref = getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString(TRANSAKSI, idTransaksi + "");
+                editor.apply();
+                Intent intent = new Intent(CurrentActivityContext.getActualContext(), DetailTransaksiActivity.class);
+                intent.putExtra(DATA_TRANSAKSI, transaksi);
+                intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onFailure(Call<Transaksi> call, Throwable t) {
+                t.printStackTrace();
+                Toast.makeText(CurrentActivityContext.getActualContext(), "Terjadi Kesalahan Tidak Terduga", Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
     }

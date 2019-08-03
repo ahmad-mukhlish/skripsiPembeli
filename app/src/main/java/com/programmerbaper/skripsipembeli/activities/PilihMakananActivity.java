@@ -70,6 +70,7 @@ public class PilihMakananActivity extends AppCompatActivity {
             setTitle("Pilihan Dagangan");
         }
 
+
     }
 
     private void initProgressDialog() {

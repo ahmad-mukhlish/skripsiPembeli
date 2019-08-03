@@ -173,11 +173,14 @@ public class PilihPedagangActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.v("cikandes","ex");
         CurrentActivityContext.setActualContext(this);
+        Log.v("cikandes",CurrentActivityContext.getActualContext().getPackageName());
     }
 
     @Override
     protected void onDestroy() {
+        Log.v("cikandes","death");
         super.onDestroy();
         CurrentActivityContext.setActualContext(null);
     }

@@ -105,6 +105,7 @@ public class DetailTransaksiActivity extends AppCompatActivity implements OnMapR
 
         dialog.show();
         getDetail();
+
     }
 
     private void initProgressDialog() {
