@@ -364,6 +364,7 @@ public class DetailTransaksiActivity extends AppCompatActivity implements OnMapR
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
 
+                Log.v("cik",response.body());
                 if (response.body().equals("hapus data berhasil")) {
                     sendNotifDeleteTransaksi();
                 }
@@ -389,6 +390,8 @@ public class DetailTransaksiActivity extends AppCompatActivity implements OnMapR
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
+
+                Log.v("cik",response.body());
                 if (response.body().equals("notif batal transaksi berhasil")) {
                     Toast.makeText(DetailTransaksiActivity.this,
                             "Transaksi dibatalkan", Toast.LENGTH_SHORT).show();

@@ -12,6 +12,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -89,6 +90,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
         Button btnLogin = findViewById(R.id.btnLogin);
+        TextView daftar = findViewById(R.id.daftar);
+        daftar.setOnClickListener(view -> {
+
+            startActivity(new Intent(this,RegisterActivity.class));
+
+        });
 
         btnLogin.setOnClickListener(this);
     }

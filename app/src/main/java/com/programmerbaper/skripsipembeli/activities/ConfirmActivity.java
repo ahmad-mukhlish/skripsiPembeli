@@ -364,13 +364,20 @@ public class ConfirmActivity extends AppCompatActivity implements DatePickerDial
         List<Address> addresses = null;
         geocoder = new Geocoder(this, Locale.getDefault());
 
+        Log.v("cikk",latitude+"");
+        Log.v("cik",longitude+"");
         try {
             addresses = geocoder.getFromLocation(latitude, longitude, 1);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return addresses.get(0).getAddressLine(0);
+        if (addresses != null) {
+
+            return addresses.get(0).getAddressLine(0);
+
+
+        } else return "";
 
     }
 
