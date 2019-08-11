@@ -7,10 +7,13 @@ import com.programmerbaper.skripsipembeli.model.Transaksi;
 
 import org.json.JSONArray;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.RequestBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -48,7 +51,7 @@ public interface APIInterface {
     @FormUrlEncoded
     @POST("saveTokenByIDPost")
     Call<String> saveTokenByIDPost(@Field("id_pembeli") int idPembeli,
-                                   @Field("fcm_token") String fcmToken) ;
+                                   @Field("fcm_token") String fcmToken);
 
     @FormUrlEncoded
     @POST("notifPesanPost")
@@ -66,7 +69,7 @@ public interface APIInterface {
     @FormUrlEncoded
     @POST("ratingPedagangPost")
     Call<String> ratingPedagangPost(@Field("id_transaksi") int idTransaksi,
-                                   @Field("rating") int rating) ;
+                                    @Field("rating") int rating);
 
     @GET("pedagangByIDGet/{id_pedagang}")
     Call<Pedagang> pedagangByIDGet(@Path("id_pedagang") int idPedagang);
@@ -74,25 +77,28 @@ public interface APIInterface {
     @FormUrlEncoded
     @POST("subscribePost")
     Call<String> subscribePost(@Field("id_pembeli") int idPembeli,
-                                    @Field("id_pedagang") int idPedagang) ;
+                               @Field("id_pedagang") int idPedagang);
 
     @FormUrlEncoded
     @POST("notifSubscribePost")
     Call<String> notifSubscribePost(@Field("id_pembeli") int idPembeli,
-                               @Field("id_pedagang") int idPedagang) ;
+                                    @Field("id_pedagang") int idPedagang);
 
 
     @GET("cekSubscribeGet/{id_pedagang}/{id_pembeli}")
     Call<String> cekSubscribeGet(@Path("id_pedagang") int idPedagang,
-                                  @Path("id_pembeli") int idPembeli);
+                                 @Path("id_pembeli") int idPembeli);
 
     @FormUrlEncoded
     @POST("deleteTransaksiPost")
-    Call<String> deleteTransaksiPost(@Field("id_transaksi") int idTransaksi) ;
+    Call<String> deleteTransaksiPost(@Field("id_transaksi") int idTransaksi);
 
     @FormUrlEncoded
     @POST("notifDeleteTransaksiPost")
     Call<String> notifDeleteTransaksiPost(@Field("id_pembeli") int idPembeli,
-                                    @Field("id_pedagang") int idPedagang) ;
+                                          @Field("id_pedagang") int idPedagang);
+
+    @POST("registerPembeliPost")
+    Call<String> registerPembeliPost(@Body RequestBody file);
 
 }
