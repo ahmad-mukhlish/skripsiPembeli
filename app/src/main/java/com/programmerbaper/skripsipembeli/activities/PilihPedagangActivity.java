@@ -72,6 +72,7 @@ public class PilihPedagangActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.logout: {
                 logout();
+                return true;
             }
             case R.id.preOrder: {
 
@@ -90,6 +91,15 @@ public class PilihPedagangActivity extends AppCompatActivity {
 
                 editor.commit();
                 getPedagang();
+
+                return true;
+            }
+            case R.id.profil: {
+                Intent intent = new Intent(PilihPedagangActivity.this, ProfilActivity.class);
+                intent.putExtra("register",false);
+                startActivity(intent);
+                return true;
+
             }
             default:
                 return super.onOptionsItemSelected(item);
@@ -159,7 +169,7 @@ public class PilihPedagangActivity extends AppCompatActivity {
         editor.putString(USERNAME, "");
         editor.putString(PASSWORD, "");
         editor.putString(FCM_TOKEN, "");
-
+        editor.putString(PREORDER, "");
 
         editor.commit();
 

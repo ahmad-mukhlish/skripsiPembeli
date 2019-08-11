@@ -1,25 +1,32 @@
 package com.programmerbaper.skripsipembeli.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.bumptech.glide.Glide;
 import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.imagepicker.model.Image;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.programmerbaper.skripsipembeli.R;
+import com.programmerbaper.skripsipembeli.model.Pedagang;
+import com.programmerbaper.skripsipembeli.model.Pembeli;
 import com.programmerbaper.skripsipembeli.retrofit.api.APIClient;
 import com.programmerbaper.skripsipembeli.retrofit.api.APIInterface;
 import com.rengwuxian.materialedittext.MaterialEditText;
@@ -35,7 +42,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class RegisterActivity extends AppCompatActivity {
+import static com.programmerbaper.skripsipembeli.misc.Config.BASE_URL;
+import static com.programmerbaper.skripsipembeli.misc.Config.ID_PEMBELI;
+import static com.programmerbaper.skripsipembeli.misc.Config.MY_PREFERENCES;
+
+public class ProfilActivity extends AppCompatActivity {
 
     private ImageView imageView;
     private MaterialEditText nama;
@@ -53,7 +64,7 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_profil);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -100,23 +111,69 @@ public class RegisterActivity extends AppCompatActivity {
         checkBox = findViewById(R.id.reg_check);
         button = findViewById(R.id.reg_button);
 
+        Bundle bundle = getIntent().getExtras();
+
+        if (bundle != null) {
+
+            if (!bundle.getBoolean("register")) {
+
+                LinearLayout linearLayout = findViewById(R.id.privacy);
+                linearLayout.setVisibility(View.GONE);
+                button.setText("Simpan Data Akun");
+
+                SharedPreferences pref = getSharedPreferences(MY_PREFERENCES, Context.MODE_PRIVATE);
+                String idPembeli = pref.getString(ID_PEMBELI, "");
+                APIInterface apiInterface = APIClient.getApiClient().create(APIInterface.class);
+                Call<Pembeli> call = apiInterface.profilGet(Integer.parseInt(idPembeli));
+
+                call.enqueue(new Callback<Pembeli>() {
+                    @Override
+                    public void onResponse(Call<Pembeli> call, Response<Pembeli> response) {
+
+                        Pembeli pembeli = response.body();
+
+                        Glide.with(ProfilActivity.this)
+                                .load(BASE_URL + "storage/pembeli-profiles/" + pembeli.getFoto())
+                                .placeholder(R.drawable.placeholder)
+                                .into(imageView);
+
+                        nama.setText(pembeli.getNama());
+                        telfon.setText(pembeli.getNoTelp());
+                        email.setText(pembeli.getEmail());
+                        alamat.setText(pembeli.getAlamat());
+                        username.setText(pembeli.getUsername());
+                        password.setText(pembeli.getPassword());
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<Pembeli> call, Throwable t) {
+
+                    }
+                });
+
+
+            }
+
+        }
+
         button.setOnClickListener(view -> {
 
             if (nama.getText().toString().isEmpty() || telfon.getText().toString().isEmpty() ||
                     email.getText().toString().isEmpty() || alamat.getText().toString().isEmpty()
                     || username.getText().toString().isEmpty() || password.getText().toString().isEmpty()
                     || confirm.getText().toString().isEmpty()) {
-                Toast.makeText(RegisterActivity.this, "Data masih Ada yang kosong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProfilActivity.this, "Data masih Ada yang kosong", Toast.LENGTH_SHORT).show();
             } else if (telfon.getText().toString().length() < 12) {
-                Toast.makeText(RegisterActivity.this, "Nomor Telefon minimal 12 digit", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProfilActivity.this, "Nomor Telefon minimal 12 digit", Toast.LENGTH_SHORT).show();
             } else if (password.getText().toString().length() < 8) {
-                Toast.makeText(RegisterActivity.this, "Password minimal 8 karakter", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProfilActivity.this, "Password minimal 8 karakter", Toast.LENGTH_SHORT).show();
             } else if (!password.getText().toString().equals(confirm.getText().toString())) {
-                Toast.makeText(RegisterActivity.this, "Password dan Konfirmasi belum cocok", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProfilActivity.this, "Password dan Konfirmasi belum cocok", Toast.LENGTH_SHORT).show();
             } else if (!Patterns.EMAIL_ADDRESS.matcher(email.getText().toString()).matches()) {
-                Toast.makeText(RegisterActivity.this, "Email tidak valid", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProfilActivity.this, "Email tidak valid", Toast.LENGTH_SHORT).show();
             } else if (!checkBox.isChecked()) {
-                Toast.makeText(RegisterActivity.this, "Silakan setujui Terms of Service dan Privacy Policy", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProfilActivity.this, "Silakan setujui Terms of Service dan Privacy Policy", Toast.LENGTH_SHORT).show();
             } else {
 
                 MultipartBody.Builder builder = new MultipartBody.Builder();
@@ -149,9 +206,9 @@ public class RegisterActivity extends AppCompatActivity {
                 call.enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
-                        Toast.makeText(RegisterActivity.this, response.body(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ProfilActivity.this, response.body(), Toast.LENGTH_SHORT).show();
                         if (response.body().equals("Register berhasil")) {
-                            RegisterActivity.this.startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                            ProfilActivity.this.startActivity(new Intent(ProfilActivity.this, LoginActivity.class));
                         }
 
 

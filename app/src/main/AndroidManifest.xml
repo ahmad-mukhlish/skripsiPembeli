@@ -16,9 +16,7 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".activities.RegisterActivity"
-            android:label="@string/title_activity_register"
-            android:parentActivityName=".activities.LoginActivity"
+            android:name=".activities.ProfilActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

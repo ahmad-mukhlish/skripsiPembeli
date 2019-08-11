@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".activities.RegisterActivity">
+    tools:context=".activities.ProfilActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
@@ -49,8 +49,8 @@
         android:layout_height="match_parent"
         android:background="@color/background"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context=".activities.RegisterActivity"
-        tools:showIn="@layout/activity_register">
+        tools:context=".activities.ProfilActivity"
+        tools:showIn="@layout/activity_profil">
 
 
         <LinearLayout
@@ -209,6 +209,7 @@
                 android:layout_marginEnd="16dp">
 
                 <LinearLayout
+                    android:id="@+id/privacy"
                     android:layout_width="match_parent"
                     android:layout_height="64dp"
                     android:gravity="center_vertical"

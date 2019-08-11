@@ -93,7 +93,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         TextView daftar = findViewById(R.id.daftar);
         daftar.setOnClickListener(view -> {
 
-            startActivity(new Intent(this,RegisterActivity.class));
+            Intent intent = new Intent(this,ProfilActivity.class);
+            intent.putExtra("register",true);
+            startActivity(new Intent(this, ProfilActivity.class));
 
         });
 

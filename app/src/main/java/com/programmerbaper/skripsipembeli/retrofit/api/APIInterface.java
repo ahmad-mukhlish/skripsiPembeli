@@ -101,4 +101,7 @@ public interface APIInterface {
     @POST("registerPembeliPost")
     Call<String> registerPembeliPost(@Body RequestBody file);
 
+    @GET("profilGet/{id_pembeli}")
+    Call<Pembeli> profilGet(@Path("id_pembeli") int idPembeli);
+
 }
